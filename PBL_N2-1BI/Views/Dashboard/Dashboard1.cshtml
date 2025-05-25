@@ -1,0 +1,156 @@
+﻿@model List<RegistroViewModel>
+@using Newtonsoft.Json
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@{
+    ViewData["Title"] = "Histórico de Temperaturas";
+}
+
+<style>
+    select {
+        width: 18%;
+        padding: 2px;
+        height: 30px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        width: 10%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
+
+    th {
+        background-color: black;
+        color: white
+    }
+
+    tr:nth-child(even) {
+        background-color: #fce6b5;
+    }
+
+</style>
+
+<h1 id="titulo" class="mb-4">@ViewData["Title"]</h1>
+
+<script>
+    $(document).ready(function() {
+
+        $.fn.dataTable.moment('DD/MM/YYYY HH:mm:ss');
+
+        var valorDado = '@ViewBag.TipoDado';
+
+        if(valorDado)
+            $('#tipoDado').val(valorDado);
+        else
+            $('#tipoDado').val('Temperatura');
+
+        dashboard1.onChangeCombo();
+        dashboard1.consultaAtualiza();
+
+        setInterval(() => {
+            dashboard1.consultaAtualiza();
+        }, 5000);
+
+        dashboard1.montarTabelaRegistros()
+
+        table = $('#tabelaRegistros').DataTable({
+            order: [[0, 'desc']],
+            columns: [
+                { title: "Data/Hora" },
+                { title: "Temperatura (Cº)" },
+                { title: "Umidade (%)" },
+                { title: "Luminosidade (%)" }
+            ]
+        });
+    });
+</script>
+
+<div class="container">
+    <div class="row" style="text-align:left">
+        <label style="padding:10px" for="tipoDado">Selecionar dado:</label>
+        <select id="tipoDado" name="tipoDado" onchange="dashboard1.onChangeCombo()">
+            <option value="Temperatura">Temperatura</option>
+            <option value="Umidade">Umidade</option>
+            <option value="Luminosidade">Luminosidade</option>
+            <option value="Geral">Geral</option>
+        </select>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary text-center">
+                <div class="card-header">Valor Atual</div>
+                <div class="card-body">
+                    <h2 id="tempAtual" class="display-4">-- °C</h2>
+                    <p id="statusTemp" class="mt-2">Status: --</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <canvas id="graficoTempoReal" height="140"></canvas>
+        </div>
+    </div>
+
+    <h5>Últimas Leituras</h5>
+    <table id="tabelaRegistros" class="display">
+        <thead>
+            <tr>
+                <th>Data/Hora</th>
+                <th>Temperatura (Cº)</th>
+                <th>Umidade (%)</th>
+                <th>Luminosidade (%)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+@section Scripts {
+
+    <script src="@Url.Content("~/js/site.js")"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.25/sorting/datetime-moment.js"></script>
+
+    <script>
+        const dados = @Html.Raw(JsonConvert.SerializeObject(Model));
+        dadosDashBoard = dados.slice(-24);
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>      
+        // Temperatura atual
+        /*let status = "Normal";
+
+        if (tempAtual > 45)
+            status = "Alerta: Valor ";
+        else if (tempAtual > 155) 
+            status = "Crítico: Acima do limite!";
+
+        $("#statusTemp").innerText = `Status: ${status}`;*/
+
+        // Tabela
+        /*const tabela = document.getElementById("tabelaRegistros");
+        leituras.reverse().forEach(p => {
+            tabela.innerHTML += `<tr><td>${p.data}</td><td>${p.temperatura}</td></tr>`;
+        });*/
+    </script>
+}

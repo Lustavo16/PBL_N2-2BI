@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Sobre o Sistema";
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+<div class="container">
+    <section class="mb-5">
+        <h3>Descrição do Projeto</h3>
+        <p>
+            Este projeto tem como foco o desenvolvimento de um sistema de monitoramento térmico baseado em <strong>Internet das Coisas (IoT)</strong> para estufas utilizadas no processo de secagem de motores elétricos. A proposta visa garantir maior controle de temperatura, promovendo eficiência operacional, redução de desperdício energético e maior uniformidade na secagem dos motores.
+        </p>
+        <p>
+            O sistema integra sensores conectados a um microcontrolador, que transmite dados via protocolo para o <strong>FIWARE Orion Context Broker</strong>. Esses dados são então visualizados por meio de uma aplicação web desenvolvida em <strong>ASP.NET Core MVC</strong>, com suporte a dashboards, consultas e visualizações históricas.
+        </p>
+    </section>
+
+    <section class="mb-5">
+        <h3>Classes de Isolamento Térmico</h3>
+        <p>
+            As classes de isolamento térmico são determinadas por normas técnicas (IEC 60085, NEMA, ABNT) e classificam os materiais com base na temperatura máxima contínua que suportam. Essas classes são fundamentais para garantir que os motores operem dentro dos limites seguros de temperatura:
+        </p>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Classe</th>
+                    <th>Temperatura Máxima</th>
+                    <th>Materiais Utilizados</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Classe A</td><td>Até 105°C</td><td>Papel, celulose ou algodão</td></tr>
+                <tr><td>Classe E</td><td>Até 120°C</td><td>Papéis celulósicos, poliéster, vernizes sintéticos</td></tr>
+                <tr><td>Classe B</td><td>Até 130°C</td><td>Mica com vernizes de poliéster ou epóxi, fibra de vidro</td></tr>
+                <tr><td>Classe F</td><td>Até 155°C</td><td>Mica, filmes de poliéster e fibra de vidro tratada</td></tr>
+                <tr><td>Classe H</td><td>Até 180°C</td><td>Mica, silicone, poliimida</td></tr>
+                <tr><td>Classe N</td><td>Até 200°C</td><td>Poliimida, poliéster-imida, vernizes modificados ou fluorados</td></tr>
+                <tr><td>Classe R</td><td>Até 220°C</td><td>Poliimida de alta performance, Teflon</td></tr>
+                <tr><td>Classe S</td><td>Até 240°C</td><td>Compósitos de poliimida de alta performance, Teflon, fibras sintéticas</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="mb-4">
+        <h3>Objetivos</h3>
+        <ul>
+            <li>Coletar e exibir dados em tempo real;</li>
+            <li>Armazenar informações para análise histórica;</li>
+            <li>Fornecer dashboards e consultas avançadas;</li>
+            <li>Facilitar a tomada de decisões sobre os processos aplicados.</li>
+        </ul>
+    </section>
+
+    <section class="mb-4">
+        <h3>Tecnologias Utilizadas</h3>
+        <ul>
+            <li>ASP.NET Core MVC;</li>
+            <li>HTML5, CSS3, JavaScript, SQL e C#;</li>
+            <li>ESP32 e MQTT.</li>
+        </ul>
+    </section>
+
+    <section class="mb-4">
+        <h3>Integrantes do Grupo</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>RA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Aline Cristina Ribeiro de Barros</td>
+                    <td>081230021</td>
+                </tr>
+                <tr>
+                    <td>Ezequiel Rodrigues Pereira</td>
+                    <td>081230008</td>
+                </tr>
+                <tr>
+                    <td>Luis Gustavo de Oliveira Carneiro</td>
+                    <td>081230029</td>
+                </tr>
+                <tr>
+                    <td>João Victor Pereira Andrade</td>
+                    <td>081230010</td>
+                </tr>
+                <tr>
+                    <td>Roger Rocha da Silva</td>
+                    <td>081230045</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h3>Orientadores</h3>
+        <p>
+            Prof. Eduardo Rosalem Marcelino – Linguagem de Programação I
+        </p>
+        <p>
+            Prof. Fábio Cabrini – Sistemas Embarcados
+        </p>
+        <p>
+            Prof. Ricardo Calvo Costa – Fenômenos de Transporte
+        </p>
+        <p>
+            Prof. Marcones Brito – Controle e Automação
+        </p>
+        <p>
+            Prof. Márcio Rodrigues da Silva - Mecânica dos Sólidos
+        </p>
+    </section>
+</div>
+

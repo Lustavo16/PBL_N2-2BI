@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<head>
+    <style>
+        .container-linha {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .usuario-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centraliza o texto em relação à imagem */
+            width: 330px;
+        }
+
+        .usuario-img {
+            width: 300px;
+        }
+
+        .usuario-titulo {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .container-simples {
+            max-width: 3000px;
+            margin: auto;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            width: 40%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+
+<div class="container-simples">
+    <div class="container-linha">
+        <div class="usuario-box">
+            <a href="/Usuario/Consulta">
+                <img src="/Imagens/employee (1).png" class="usuario-img" />
+            </a>
+            <h2 class="usuario-titulo">Usuários</h2>
+        </div>
+
+        <div class="usuario-box">
+            <a href="/Simulacao/Consulta">
+                <img src="/Imagens/ux.png" class="usuario-img" />
+            </a>
+            <h2 class="usuario-titulo">Simulações</h2>
+        </div>
+        <div class="usuario-box">
+            <a href="/Motor/Consulta">
+                <img src="/Imagens/motor-gpt.png" class="usuario-img" />
+            </a>
+            <h2 class="usuario-titulo">Motores</h2>
+        </div>
+    </div>
+</div>
+<br>
+<div class="container-simples">
+    <div class="container-linha">
+        <div class="usuario-box">
+            <a href="/Dashboard/Dashboard1">
+                <img src="/Imagens/profit-growth-blue.png" class="usuario-img" />
+            </a>
+            <h2 class="usuario-titulo">Monitoramento em Tempo Real</h2>
+        </div>
+
+        <div class="usuario-box">
+            <a href="/Dashboard/Dashboard2">
+                <img src="/Imagens/profit-growth-red.png" class="usuario-img" />
+            </a>
+            <h2 class="usuario-titulo">Histórico de Temperaturas</h2>
+        </div>
+    </div>
+</div>
+<br>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+}

@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<style>
+    .swal-wide {
+        padding: 20px;
+    }
+
+    .btn-maior {
+        width: 300px;
+        padding: 5px 20px !important;
+    }
+
+    button {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+</style>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>@ViewData["Title"] - PBL_N2_1BI</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body style="background-color:#fdf5e8;">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" style="background-color:#ffaf10; color:white">
+            <div class="container" style="background-color:#ffaf10; height:80px">
+                @if (TempData["Login"] == null || TempData["Login"].ToString() != "Login")
+                {
+                    <a class="navbar-brand" style="color:white; font-size:25px" asp-area="" asp-controller="Home" asp-action="Index">Projeto Estufa de Secagem</a>
+                }
+                else
+                {
+                    <a class="navbar-brand" style="color:white; font-size:25px">Projeto Estufa de Secagem</a>
+                }
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-1">
+                        @if (TempData["Login"] == null || TempData["Login"].ToString() != "Login")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" style="color:white; font-size:18px" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" style="color:white; font-size:18px" asp-area="" asp-controller="Home" asp-action="Sobre">Sobre</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                @if (TempData["Login"] == null || TempData["Login"].ToString() != "Login")
+                {
+                    <button style="width:80px; height:40px; background-color:black; color:white" onclick="confirmarSair()">Sair</button>
+                }
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+<script>
+    function confirmarSair() {
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: "Você realmente deseja sair?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sim, sair!',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                popup: 'swal-wide',
+                confirmButton: 'btn-maior',
+                cancelButton: 'btn-maior'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/Login/Login';
+            }
+        });
+    }
+</script>

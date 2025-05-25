@@ -1,0 +1,169 @@
+﻿@model List<UsuarioViewModel>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Lista de Currículos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: black;
+            color: white
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Consultar Usuários</h2>
+        @if (TempData["Mensagem"] != null)
+        {
+            <div id="mensagem" class="alert alert-success">@TempData["Mensagem"]</div>
+            TempData["Mensagem"] = null;
+        }
+        <script>
+            function limpaCampos (){
+                $('#Nome').val('');
+                $('#Login').val('');
+            }
+        </script>
+        <div style="padding-top:20px; padding-bottom:20px">
+            <form action="/Usuario/Consulta" method="post">
+                <input id="Nome" type="text" name="Nome" placeholder="Filtrar por Nome" value="@ViewBag.Filtros.Nome">
+                <input id="Login" type="text" name="Login" placeholder="Filtrar por Login" value="@ViewBag.Filtros.Login">               
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <input type="submit" value="Pesquisar" style="width: 120px;background-color: black; color: white;">
+                        <button onclick="limpaCampos()" style="width: 120px;">
+                            Limpar
+                        </button>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" onclick="window.location.href='/Usuario/Adicionar'" style="width: 120px; background-color: black; color: white;">
+                            Adicionar
+                        </button>
+                        <button type="button" onclick="window.location.href='/Home/Index'" style="width: 120px;">
+                            Voltar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Login</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Primeiro Acesso</th>
+                    <th style="width:6%">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaUsuarios">
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td>@usuario.Login</td>
+                        <td>@usuario.Nome</td>
+                        <td>@usuario.Email</td>
+                        <td>@(usuario.IsPrimeiroAcesso ? "Pendente" : "Senha Cadastrada")</td>
+                        <td>
+                            <a href="Editar?idUsuario=@usuario.Id" style="padding:5px">
+                                <img src="/Imagens/edit.png" class="usuario-img" style="width:80%;padding:5px;" />
+                            </a>
+                            <br>
+                            <a onclick="confirmarExclusao(@usuario.Id)" style="padding:5px;padding-top:10px">
+                                <img src="/Imagens/delete.png" class="usuario-img" style="width:85%;padding:5px;" />
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <script>
+            function confirmarExclusao(id) {
+                Swal.fire({
+                    title: 'Tem certeza?',
+                    text: "Você realmente deseja excluir este Usuário?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sim, excluir!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/Usuario/Excluir?Id=' + id;
+                    }
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                let mensagem = document.getElementById('mensagem')
+
+                if(mensagem)
+                {
+                    setTimeout(() => {
+                        mensagem.style.display = 'none';;
+                    }, 3000);
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>

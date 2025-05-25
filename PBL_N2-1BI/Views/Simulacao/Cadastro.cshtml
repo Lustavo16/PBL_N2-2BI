@@ -1,0 +1,141 @@
+﻿@model SimulacaoViewModel
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuários</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        input {
+            width: 75%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        select {
+            width: 75%;
+            padding: 15px;
+            height: 49px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        label {
+            width: 25%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: black;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body style="text-align:center">
+    <form action="/Simulacao/Salvar" method="post" style="wtext-align:center">
+        <div class="container" style="width:65%; text-align:center">
+            <h2>Cadastrar Simulação</h2>
+            <br>
+            <div style="text-align:center">
+                <input id="idSimulacao" type="text" name="Id" value="@Model.Id" hidden>
+                <span asp-validation-for="Nome" class="text-danger"></span><br>
+                @if (Model.Id.HasValue)
+                {
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div style="text-align: center;">
+                            <h5>Nome:</h5>
+                            <input type="text" style="width: 265px;" asp-for="Nome" placeholder="Nome" value="@Model.Nome" maxlength="50">
+                        </div>
+                        <div style="text-align: center;">
+                            <h5>Data Criação/Alteração:</h5>
+                            <input type="text" style="width: 265px;" name="DataCriacaoAlteracao" placeholder="Data Criação/Alteração" value="@Model.DataCriacaoAlteracao" disabled>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align:center">
+                        <h5>Nome:</h5>
+                    </div>
+                    <input type="text" style="width:75%" asp-for="Nome" placeholder="Nome" value="@Model.Nome" maxlength="50">
+                }
+                <h5>Motor:</h5>
+                <select name="IdMotor">
+                    @foreach (var motor in ViewBag.Motores as List<MotorViewModel>)
+                    {
+                        var selected = motor.Id == Model.IdMotor ? "selected='selected'" : "";
+                        @Html.Raw($"<option value='{motor.Id}' {selected}>{motor.Modelo}</option>")
+                    }
+                </select>
+
+                <h5>Usuário:</h5>
+                <select name="IdUsuario">
+                    @foreach (var usuario in ViewBag.Usuarios as List<UsuarioViewModel>)
+                    {
+                        var selected = usuario.Id == Model.IdUsuario ? "selected='selected'" : "";
+                        @Html.Raw($"<option value='{usuario.Id}' {selected}>{usuario.Login}</option>")
+                    }
+                </select>
+            </div>
+        </div>
+        <br>
+        <div style="text-align:center;">
+            <input type="submit" value="Salvar" style="width:15%;background-color:black;color:white">
+            <button type="button" style="width:15%" onclick="window.location.href='/Simulacao/Consulta'">Cancelar</button>
+        </div>
+        @section Scripts {
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+            <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+            <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+        }
+    </form>
+</body>
