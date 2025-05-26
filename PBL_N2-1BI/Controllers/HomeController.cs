@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PBL_N2_1BI.Models;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace PBL_N2_1BI.Controllers
 {
@@ -41,10 +38,10 @@ namespace PBL_N2_1BI.Controllers
             client.DefaultRequestHeaders.Add("fiware-service", "smart");
             client.DefaultRequestHeaders.Add("fiware-servicepath", "/");
 
-            var response = await client.GetAsync("http://54.167.161.164:4041/iot/devices");
+            var response = await client.GetAsync("http://44.207.2.184:4041/iot/devices");
             var content = await response.Content.ReadAsStringAsync();
 
             return Content(content, "application/json");
-        }
+        }       
     }
 }

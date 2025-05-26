@@ -3,7 +3,12 @@ using PBL_N2_1BI.DAO;
 using PBL_N2_1BI.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Net.Http;
+using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 public class DashboardController : Controller
 {
@@ -87,5 +92,61 @@ public class DashboardController : Controller
         dataStr = ano + "-" + mes + "-" + dia;
 
         return dataStr;
+    }
+
+    public async Task<IActionResult> ObterDadosDispositivo(string ip, string tipoSensor, string idSensor, string atributo, string quantidadeValores)
+    {
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("fiware-service", "smart");
+        client.DefaultRequestHeaders.Add("fiware-servicepath", "/");
+
+        var response = await client.GetAsync($"http://{ip}:8666/STH/v1/contextEntities/type/{tipoSensor}/id/{idSensor}/attributes/{atributo}?lastN={quantidadeValores}");
+        var content = await response.Content.ReadAsStringAsync();
+
+        using JsonDocument doc = JsonDocument.Parse(content);
+
+        var root = doc.RootElement;
+        var value = root
+            .GetProperty("contextResponses")[0]
+            .GetProperty("contextElement")
+            .GetProperty("attributes")[0]
+            .GetProperty("values")
+            .ToString();
+
+        ContentResult retorno = Content(value, "application/json");
+
+        return retorno;
+    }
+
+    public static List<DateTime> ConvertToBrasiliaTime(List<string> timestamps)
+    {
+        var converted = new List<DateTime>();
+
+        // Detectar o timezone correto dependendo do sistema operacional
+        string timeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "E. South America Standard Time"
+            : "America/Sao_Paulo";
+
+        var brasiliaTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+
+        foreach (var ts in timestamps)
+        {
+            var cleanTs = ts.Replace("T", " ").Replace("Z", "");
+
+            DateTime dt;
+            if (!DateTime.TryParseExact(cleanTs, "yyyy-MM-dd HH:mm:ss.fff",
+                CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dt))
+            {
+                DateTime.TryParseExact(cleanTs, "yyyy-MM-dd HH:mm:ss",
+                    CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dt);
+            }
+
+            // Converte de UTC para horário de Brasília
+            var dtBrasilia = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(dt, DateTimeKind.Utc), brasiliaTimeZone);
+
+            converted.Add(dtBrasilia);
+        }
+
+        return converted;
     }
 }

@@ -61,11 +61,14 @@
         else
             $('#tipoDado').val('Temperatura');
 
+        dashboard1.init();
+
         dashboard1.onChangeCombo();
-        dashboard1.consultaAtualiza();
 
         setInterval(() => {
-            dashboard1.consultaAtualiza();
+            dashboard1.consultaTemperatura();
+            dashboard1.consultaLuminosidade();
+            dashboard1.consultaUmidade();
         }, 5000);
 
         dashboard1.montarTabelaRegistros()
@@ -75,8 +78,6 @@
             columns: [
                 { title: "Data/Hora" },
                 { title: "Temperatura (Cº)" },
-                { title: "Umidade (%)" },
-                { title: "Luminosidade (%)" }
             ]
         });
     });
@@ -113,9 +114,7 @@
         <thead>
             <tr>
                 <th>Data/Hora</th>
-                <th>Temperatura (Cº)</th>
-                <th>Umidade (%)</th>
-                <th>Luminosidade (%)</th>
+                <th id="tipoValor">Temperatura (Cº)</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -130,27 +129,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdn.datatables.net/plug-ins/1.10.25/sorting/datetime-moment.js"></script>
 
-    <script>
-        const dados = @Html.Raw(JsonConvert.SerializeObject(Model));
-        dadosDashBoard = dados.slice(-24);
-    </script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>      
-        // Temperatura atual
-        /*let status = "Normal";
-
-        if (tempAtual > 45)
-            status = "Alerta: Valor ";
-        else if (tempAtual > 155) 
-            status = "Crítico: Acima do limite!";
-
-        $("#statusTemp").innerText = `Status: ${status}`;*/
-
-        // Tabela
-        /*const tabela = document.getElementById("tabelaRegistros");
-        leituras.reverse().forEach(p => {
-            tabela.innerHTML += `<tr><td>${p.data}</td><td>${p.temperatura}</td></tr>`;
-        });*/
-    </script>
 }

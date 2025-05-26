@@ -93,7 +93,7 @@
                 <br>
                 <span asp-validation-for="Login" class="text-danger"></span><br>
                 <h5>Usuário:</h5>
-                <input type="text" style="width:80%" id="login" name="Login" oninput="setTimeout(verificaLogin(), 3000)" placeholder="Login" value="@Model.Login" maxlength="50" required>
+                <input type="text" style="width:80%" id="login" name="Login" oninput="setTimeout(loginSection.verificaLogin(), 3000)" placeholder="Login" value="@Model.Login" maxlength="50" required>
                 <br>
                 <span asp-validation-for="Senha" class="text-danger"></span><br>
                 <h5>Senha:</h5>
@@ -116,41 +116,10 @@
                     }, 3000);
                 }
             });
-
-            function cadastrarSenha() {
-                var login = $('#login').val()
-                window.location.href = `/Login/CadastrarSenha?loginUsuario=${login}`
-            }
-
-            function verificaLogin(){
-                var login = $('#login').val()
-               $.get(`/Login/VerificaExistenciaLogin?loginUsuario=${login}`, function(data) {
-                    var loginExiste = data;
-
-                    if(loginExiste){
-                        confirmarCadastrarSenha()
-                    }
-               });
-            }
-
-            function confirmarCadastrarSenha() {
-                                Swal.fire({
-                                    title: 'Cadastrar Senha',
-                                    text: "Você ainda não cadastrou uma senha, deseja cadastrá-la agora?",
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    width: '600px',
-                                    confirmButtonColor: '#d33',
-                                    cancelButtonColor: '#3085d6',
-                                    confirmButtonText: 'Sim!',
-                                    cancelButtonText: 'Cancelar'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        cadastrarSenha();
-                                    }
-                                });
-                            }
         </script>
     </form>
 </body>
+@section Scripts {
+    <script src="@Url.Content("~/js/site.js")"></script>
+}
 
