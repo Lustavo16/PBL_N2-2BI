@@ -5,15 +5,15 @@ var graficoTempoReal = null;
 var graficoHistorico = null;
 var valoresTemp;
 var dadosDashBoard;
-var valoresLum;
-var valoresUmid;
 var table;
 var ipRequisicao = "35.171.156.216";
+var valorTempAtual = 41;
+var contador = 0;
+var listaTemps = [];
 
 var dashboard2 = function () {
 
     const carregarDados = function () {
-        const valorCombo = document.getElementById('tipoDado').value;
         document.getElementById("titulo").textContent = "Histórico de " + valorCombo
 
         graficoTemperatura();
@@ -26,9 +26,8 @@ var dashboard2 = function () {
         console.log("teste");
         var dataIncio = $("#DataInicio").val();
         var dataFim = $("#DataFim").val();
-        var tipoDado = $("#tipoDado").val();
 
-        var url = `/Dashboard/Dashboard2?dataInicio=${dataIncio}&dataFim=${dataFim}&tipoDado=${tipoDado}`
+        var url = `/Dashboard/Dashboard2?dataInicio=${dataIncio}&dataFim=${dataFim}`
 
         window.location.href = url;
     }
@@ -129,20 +128,17 @@ var dashboard2 = function () {
 var dashboard1 = function () {
 
     const carregarDados = function () {
-        const valorCombo = document.getElementById('tipoDado').value;
-        document.getElementById("titulo").textContent = "Histórico de " + valorCombo
-
         var corStatus;
 
         let status = "Normal";
-        document.getElementById("statusTemp").innerText = `Status: ${status}`;
+        //document.getElementById("statusTemp").innerText = `Status: ${status}`;
 
         let valorAtual = 0;
 
-        if (valoresTemp)
-            valorAtual = valoresTemp.length > 0 ? valoresTemp[valoresTemp.length - 1].attrValue : '';
+        /*if (valoresTemp)
+            valorAtual = valoresTemp.length > 0 ? valoresTemp[valoresTemp.length - 1].attrValue : '';*/
 
-        document.getElementById("tempAtual").innerText = `${valorAtual} °C`;
+        //document.getElementById("tempAtual").innerText = `${valorAtual} °C`;       
 
         if ((valorAtual >= 45 && valorAtual < 48) || valorAtual == 41) {
             status = "Em alerta"
@@ -157,7 +153,7 @@ var dashboard1 = function () {
             document.getElementById("statusTemp").innerText = `Status: ${status}`;
         }
 
-        document.getElementById("tipoValor").innerText = "Temperatura Cº";
+        //document.getElementById("tipoValor").innerText = "Temperatura Cº";
 
         if (status == "Normal")
             corStatus = 'steelblue';
@@ -171,11 +167,80 @@ var dashboard1 = function () {
 
     }
 
+    const graficoGauge = function (tempAtual) {
+        const ctx = document.getElementById('gaugeChart').getContext('2d');
+
+        // Gradiente do verde para o vermelho
+        const gradient = ctx.createLinearGradient(0, 0, 300, 0);
+        gradient.addColorStop(0, 'green');
+        gradient.addColorStop(0.5, 'yellow');
+        gradient.addColorStop(1, 'red');
+
+        // Destroi gráfico anterior
+        if (window.gauge) window.gauge.destroy();
+
+        // Plugin para escrever texto no centro
+        const centerText = {
+            id: 'centerText',
+            afterDraw(chart) {
+                const { ctx, chartArea: { width, height } } = chart;
+
+                ctx.save();
+                ctx.font = 'bold 24px Arial';
+                ctx.fillStyle = 'black';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${tempAtual}°C`, width / 2, height / 2);
+            }
+        };
+
+        window.gauge = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [tempAtual, 100 - tempAtual],
+                    backgroundColor: [gradient, '#e0e0e0'],
+                    borderWidth: 0,
+                    circumference: 360,
+                    rotation: -90,
+                    cutout: '70%'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            },
+            plugins: [centerText]
+        });
+    };
+
     const graficoTemperatura = function (cor = 'steelblue') {
 
-        if (valoresTemp) {
-            const labels = valoresTemp.map(p => new Date(p.recvTime).toLocaleString("pt-BR"));
-            const valores = valoresTemp.map(p => p.attrValue);
+        if (listaTemps) {
+            /*const labels = valoresTemp.map(p => new Date(p.recvTime).toLocaleString("pt-BR"));
+            const valores = valoresTemp.map(p => p.attrValue);*/
+
+            if (listaTemps.length > 0)
+                graficoGauge(listaTemps[listaTemps.length - 1].valorTemperatura);
+            else
+                graficoGauge(0);
+
+            let setpoint = 45.00;
+            let K = 0.8144;
+
+            const labels = listaTemps.map(p => new Date(p.dataRegistro).toLocaleString("pt-BR"));
+            const valores = listaTemps.map(p => p.valorTemperatura);
+
+            const valoresErro = valores.map(p => {
+                let A = setpoint - p;
+                A = A < 0 ? A * -1 : A;
+
+                return A / 1 + K;
+            })
+
 
             if (graficoTempoReal) {
                 graficoTempoReal.destroy();
@@ -189,7 +254,15 @@ var dashboard1 = function () {
                     datasets: [{
                         label: 'Temperatura (°C)',
                         data: valores,
-                        borderColor: cor,
+                        borderColor: 'steelblue',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    },
+                    {
+                        label: 'Erro',
+                        data: valoresErro,
+                        borderColor: 'red',
                         borderWidth: 2,
                         fill: false,
                         tension: 0.2
@@ -205,6 +278,55 @@ var dashboard1 = function () {
         }
     }
 
+    const simulaTemp = function (limpar = false) {
+
+        let agora = new Date();
+        let dia = agora.getDate();
+        let mes = agora.getMonth() + 1; // Atenção! Janeiro = 0
+        let ano = agora.getFullYear();
+        let horas = agora.getHours();
+        let minutos = agora.getMinutes();
+        let segundos = agora.getSeconds();
+
+        dataAtual = `${ano}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
+
+        if (limpar) {
+            listaTemps = []
+            valorTempAtual = 22;
+            contador = 0;
+        }
+
+        let objTemp = {
+            valorTemperatura: valorTempAtual,
+            dataRegistro: dataAtual
+        }
+
+
+        if (contador == 0) {
+            listaTemps.push(objTemp);
+
+            if (valorTempAtual <= 45)
+                valorTempAtual += 2;
+            else if (valorTempAtual > 45 && valorTempAtual < 50) {
+                valorTempAtual += 1;
+            }
+            else if (valorTempAtual >= 50 && valorTempAtual <= 52) {
+                valorTempAtual += 0.5;
+            }
+            else {
+                valorTempAtual += 0;
+            }
+        }
+
+        contador += 1;
+
+        if (contador == 1)
+            contador = 0;
+
+        carregarDados();
+        montarTabelaRegistros(listaTemps);
+    }
+
     const consultaAtualiza = function () {
 
         $.ajax({
@@ -213,9 +335,9 @@ var dashboard1 = function () {
         }).done(function (response) {
             if (response) {
                 montarTabelaRegistros(response);
-                dadosDashBoard = response.slice(-15);
+                valoresTemp = response;
             }
-            onChangeCombo();
+            carregarDados();
         });
     }
 
@@ -234,9 +356,7 @@ var dashboard1 = function () {
             }).done(function (response) {
                 if (response) {
                     valoresTemp = response.slice(-15);
-
-                    if ($('#tipoDado').val() == "Temperatura")
-                        montarTabelaRegistros(response)
+                    montarTabelaRegistros(response)
 
                     carregarDados();
                 }
@@ -252,8 +372,8 @@ var dashboard1 = function () {
 
             registros.forEach(registro => {
                 table.row.add([
-                    new Date(registro.recvTime).toLocaleString("pt-BR"),
-                    registro.attrValue,
+                    new Date(registro.dataRegistro).toLocaleString("pt-BR"),
+                    registro.valorTemperatura,
                 ]);
             });
 
@@ -273,6 +393,8 @@ var dashboard1 = function () {
         recarregarTabela: recarregarTabela,
         montarTabelaRegistros: montarTabelaRegistros,
         consultaTemperatura: consultaTemperatura,
+        simulaTemp: simulaTemp,
+        graficoGauge: graficoGauge,
     }
 }();
 

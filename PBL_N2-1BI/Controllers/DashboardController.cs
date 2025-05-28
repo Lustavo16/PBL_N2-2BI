@@ -12,11 +12,9 @@ using System.Threading.Tasks;
 
 public class DashboardController : Controller
 {
-    public IActionResult Dashboard1(DateTime? dataInicio, DateTime? dataFim, string tipoDado)
+    public IActionResult Dashboard1(DateTime? dataInicio, DateTime? dataFim)
     {
         RegistroDAO dao = new RegistroDAO();
-
-        ViewBag.TipoDado = tipoDado;
 
         List<RegistroViewModel> model = dao.ListarRegistros();
 
@@ -34,12 +32,10 @@ public class DashboardController : Controller
         return View(model);
     }
 
-    public IActionResult Dashboard2(DateTime? dataInicio, DateTime? dataFim, string tipoDado)
+    public IActionResult Dashboard2(DateTime? dataInicio, DateTime? dataFim)
     {
         RegistroDAO dao = new RegistroDAO();
        
-        ViewBag.TipoDado = tipoDado;
-
         List<RegistroViewModel> model = dao.ListarRegistros();
 
         if (dataInicio.HasValue)
@@ -63,13 +59,13 @@ public class DashboardController : Controller
 
         try
         {
-            RegistroViewModel registro = new RegistroViewModel()
+            /*RegistroViewModel registro = new RegistroViewModel()
             {
                 DataRegistro = DateTime.Now.AddMilliseconds(-DateTime.Now.Millisecond),
                 ValorTemperatura = random.Next(41, 51),
             };
 
-            dao.InserirRegistro(registro);
+            dao.InserirRegistro(registro);*/
 
             return Json(dao.ListarRegistros());
         }
@@ -107,7 +103,7 @@ public class DashboardController : Controller
         var value = root
             .GetProperty("contextResponses")[0]
             .GetProperty("contextElement")
-            .GetProperty("attributes")[0]
+            .GetProperty("attributes")[0] 
             .GetProperty("values")
             .ToString();
 

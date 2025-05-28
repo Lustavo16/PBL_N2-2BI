@@ -3,7 +3,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @{
-    ViewData["Title"] = "Histórico de Temperaturas";
+    ViewData["Title"] = "Temperatura - Aferição em tempo de execução";
 }
 
 <style>
@@ -54,13 +54,13 @@
 
         $.fn.dataTable.moment('DD/MM/YYYY HH:mm:ss');
 
-        $('#tipoDado').val('Temperatura');
-
         dashboard1.carregarDados();
 
         setInterval(() => {
-            dashboard1.consultaTemperatura();
-        }, 2000);
+            //dashboard1.consultaTemperatura();
+            //dashboard1.consultaAtualiza();
+            dashboard1.simulaTemp();
+        }, 5000);
 
         dashboard1.montarTabelaRegistros()
 
@@ -75,28 +75,15 @@
 </script>
 
 <div class="container">
-    <div class="row" style="text-align:left">
-        <label style="padding:10px" for="tipoDado">Selecionar dado:</label>
-        <select id="tipoDado" name="tipoDado" onchange="dashboard1.onChangeCombo()">
-            <option value="Temperatura">Temperatura</option>
-        </select>
-    </div>
+    <button onclick="dashboard1.simulaTemp(true)">resetar</button>
     <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card text-white bg-primary text-center">
-                <div class="card-header">Valor Atual</div>
-                <div class="card-body">
-                    <h2 id="tempAtual" class="display-4">-- °C</h2>
-                    <p id="statusTemp" class="mt-2">Status: --</p>
-                </div>
-            </div>
+        <div style="height:250px; text-align: right">
+            <canvas id="gaugeChart"></canvas>
         </div>
-
         <div class="col-md-8">
             <canvas id="graficoTempoReal" height="140"></canvas>
         </div>
     </div>
-
     <h5>Últimas Leituras</h5>
     <table id="tabelaRegistros" class="display">
         <thead>
