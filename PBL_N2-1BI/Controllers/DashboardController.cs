@@ -66,9 +66,7 @@ public class DashboardController : Controller
             RegistroViewModel registro = new RegistroViewModel()
             {
                 DataRegistro = DateTime.Now.AddMilliseconds(-DateTime.Now.Millisecond),
-                ValorLuminosidade = random.Next(12, 26),
                 ValorTemperatura = random.Next(41, 51),
-                ValorUmidade = random.Next(39, 47),
             };
 
             dao.InserirRegistro(registro);

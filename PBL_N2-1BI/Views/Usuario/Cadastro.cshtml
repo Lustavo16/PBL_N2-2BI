@@ -80,10 +80,34 @@
     </style>
 </head>
 <body style="text-align:center">
-    <form action="/Usuario/Salvar" method="post" style="wtext-align:center">
+    <form action="/Usuario/Salvar" method="post" enctype="multipart/form-data" style="wtext-align:center">
         <div class="container" style="width:80%; text-align:center">
             <h2>Cadastrar Usuário</h2>
-            <div style="text-align:center">
+            @if (!string.IsNullOrEmpty(Model.FotoBase64))
+            {
+                <label>Preview do Logo:</label>
+                <br />
+                <img src="data:image/png;base64,@Model.FotoBase64"
+                     alt="Logo do Time"
+                     id="preview"
+                     style="max-width: 300px; max-height: 300px; object-fit: fill; border: 1px solid #ccc;" />
+                <br />
+            }
+            else
+            {
+                <div style="text-align:left">
+                    <br />
+                    <img src="~/Imagens/vecteezy_user-icon-on-transparent-background_19879186.png"
+                         alt="Foto Usuario"
+                         id="preview"
+                         style="width: 500px; height: 300px; object-fit: fill; border: 1px solid #ccc;" />
+                    <br />
+                    <label for="ImagemLogo">Selecione a foto:</label>
+                    <input style="width:50%" type="file" name="Foto" id="FotoUsuario" class="form-control" accept="image/*" onchange="previewImagem(event)" />
+                </div>
+                <br />
+            }
+            <div style="text-align:left">
                 <br>
                 <input id="idUsuario" type="text" name="Id" value="@Model.Id" hidden>
                 <span asp-validation-for="Login" class="text-danger"></span><br>
@@ -110,6 +134,22 @@
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
             <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+            <script>
+                function previewImagem(event) {
+                    var input = event.target;
+                    var reader = new FileReader();
+
+                    reader.onload = function () {
+                        var img = document.getElementById('preview');
+                        img.style.width = '300px'
+                        img.src = reader.result;
+                    };
+
+                    if (input.files && input.files[0]) {
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
+            </script>
         }
     </form>
 </body>

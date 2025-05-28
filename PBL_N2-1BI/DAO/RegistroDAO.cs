@@ -1,10 +1,8 @@
-﻿using static PBL_N2_1BI.DAO.SimulacaoDAO;
-using System.Data.SqlClient;
-using System.Data;
+﻿using PBL_N2_1BI.Models;
 using System;
 using System.Collections.Generic;
-using PBL_N2_1BI.Models;
-using System.Linq;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace PBL_N2_1BI.DAO
 {
@@ -15,9 +13,7 @@ namespace PBL_N2_1BI.DAO
             SqlParameter[] parametros = new SqlParameter[5];
             parametros[0] = new SqlParameter("Id", registro.Id);
             parametros[1] = new SqlParameter("DataRegistro", registro.DataRegistro);
-            parametros[2] = new SqlParameter("ValorUmidade", registro.ValorUmidade);
             parametros[3] = new SqlParameter("ValorTemperatura", registro.ValorTemperatura);
-            parametros[4] = new SqlParameter("ValorLuminosidade", registro.ValorLuminosidade);
 
             return parametros;
         }
@@ -28,7 +24,7 @@ namespace PBL_N2_1BI.DAO
 
             string sql =
                 "INSERT INTO Registros " +
-                $"VALUES (@Id, @DataRegistro, @ValorUmidade, @ValorTemperatura, @ValorLuminosidade)";
+                $"VALUES (@Id, @DataRegistro, @ValorTemperatura)";
 
             HelperDAO.ExecutaSQL(sql, CriaParametros(registro));
         }
@@ -73,9 +69,7 @@ namespace PBL_N2_1BI.DAO
 
             registroRetorno.Id = Convert.ToInt32(registro["id"]);
             registroRetorno.DataRegistro = Convert.ToDateTime(registro["Data_Registro"]);
-            registroRetorno.ValorUmidade = Convert.ToInt32(registro["Valor_Umidade"]);
             registroRetorno.ValorTemperatura = Convert.ToDouble(registro["Valor_Temperatura"]);
-            registroRetorno.ValorLuminosidade = Convert.ToInt32(registro["Valor_Luminosidade"]);
 
             return registroRetorno;
         }
@@ -102,9 +96,7 @@ namespace PBL_N2_1BI.DAO
                     listaRegistros.Add(new RegistroViewModel()
                     {
                         DataRegistro = new DateTime(2025, i, j),
-                        ValorLuminosidade = random.Next(12, 26),
                         ValorTemperatura = random.Next(41, 51),
-                        ValorUmidade = random.Next(39, 47),
                     });
                 }
             }

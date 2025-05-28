@@ -8,38 +8,18 @@ var dadosDashBoard;
 var valoresLum;
 var valoresUmid;
 var table;
-var ipRequisicao = "18.207.213.221";
+var ipRequisicao = "35.171.156.216";
 
 var dashboard2 = function () {
 
-    const onChangeCombo = function () {
+    const carregarDados = function () {
         const valorCombo = document.getElementById('tipoDado').value;
         document.getElementById("titulo").textContent = "Histórico de " + valorCombo
 
-        if (valorCombo == "Temperatura") {
-            graficoTemperatura();
-            document.querySelector('.val-min').innerHTML = `Mínima: <span id="minTemp">${min}</span> ºC`;
-            document.querySelector('.val-max').innerHTML = `Máxima: <span id="maxTemp">${max}</span> ºC`;
-            document.querySelector('.val-mid').innerHTML = `Média: <span id="mediaTemp">${media}</span> ºC`;
-        }
-        else if (valorCombo == "Umidade") {
-            graficoUmidade();
-            document.querySelector('.val-min').innerHTML = `Mínima: <span id="minTemp">${min}</span> %`;
-            document.querySelector('.val-max').innerHTML = `Máxima: <span id="maxTemp">${max}</span> %`;
-            document.querySelector('.val-mid').innerHTML = `Média: <span id="mediaTemp">${media}</span> %`;
-        }
-        else if (valorCombo == "Luminosidade") {
-            graficoLuminosidade();
-            document.querySelector('.val-min').innerHTML = `Mínima: <span id="minTemp">${min}</span> %`;
-            document.querySelector('.val-max').innerHTML = `Máxima: <span id="maxTemp">${max}</span> %`;
-            document.querySelector('.val-mid').innerHTML = `Média: <span id="mediaTemp">${media}</span> %`;
-        }
-        else if (valorCombo == "Geral") {
-            graficoGeral();
-            document.querySelector('.val-min').innerHTML = `Mínima: <span id="minTemp">${min}</span> %`;
-            document.querySelector('.val-max').innerHTML = `Máxima: <span id="maxTemp">${max}</span> %`;
-            document.querySelector('.val-mid').innerHTML = `Média: <span id="mediaTemp">${media}</span> %`;
-        }
+        graficoTemperatura();
+        document.querySelector('.val-min').innerHTML = `Mínima: <span id="minTemp">${min}</span> ºC`;
+        document.querySelector('.val-max').innerHTML = `Máxima: <span id="maxTemp">${max}</span> ºC`;
+        document.querySelector('.val-mid').innerHTML = `Média: <span id="mediaTemp">${media}</span> ºC`;
     }
 
     const filtrar = function () {
@@ -55,192 +35,81 @@ var dashboard2 = function () {
 
     const graficoTemperatura = function () {
 
-        const labels = dadosDashBoard.map(p => new Date(p.dataRegistro).toLocaleString("pt-BR"));
-        const valores = dadosDashBoard.map(p => p.valorTemperatura);
+        if (valoresTemp) {
+            const labels = valoresTemp.map(p => new Date(p.recvTime).toLocaleString("pt-BR"));
+            const valores = valoresTemp.map(p => p.attrValue);
 
-        if (graficoHistorico) {
-            graficoHistorico.destroy();
-        }
-
-        const ctx = document.getElementById('graficoHistorico').getContext('2d');
-        graficoHistorico = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Temperatura (°C)',
-                    data: valores,
-                    borderColor: 'red',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2
-                }],
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true }
-                }
+            if (graficoTempoReal) {
+                graficoTempoReal.destroy();
             }
-        });
 
-        min = Math.min(...valores);
-        max = Math.max(...valores);
-        media = (valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(2);
-
-        document.getElementById("minTemp").innerText = min;
-        document.getElementById("maxTemp").innerText = max;
-        document.getElementById("mediaTemp").innerText = media;
-    }
-
-    const graficoUmidade = function () {
-
-        const labels = dadosDashBoard.map(p => new Date(p.dataRegistro).toLocaleString("pt-BR"));
-        const valores = dadosDashBoard.map(p => p.valorUmidade);
-
-        if (graficoHistorico) {
-            graficoHistorico.destroy();
-        }
-
-        const ctx = document.getElementById('graficoHistorico').getContext('2d');
-        graficoHistorico = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Umidade (%)',
-                    data: valores,
-                    borderColor: 'steelblue',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true }
-                }
-            }
-        });
-
-        // Calcular estatísticas
-        min = Math.min(...valores);
-        max = Math.max(...valores);
-        media = (valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(2);
-
-        document.getElementById("minTemp").innerText = min;
-        document.getElementById("maxTemp").innerText = max;
-        document.getElementById("mediaTemp").innerText = media;
-    }
-
-    const graficoLuminosidade = function () {
-
-        const labels = dadosDashBoard.map(p => new Date(p.dataRegistro).toLocaleString("pt-BR"));
-        const valores = dadosDashBoard.map(p => p.valorLuminosidade);
-
-        if (graficoHistorico) {
-            graficoHistorico.destroy();
-        }
-
-        const ctx = document.getElementById('graficoHistorico').getContext('2d');
-        graficoHistorico = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Luminosidade (%)',
-                    data: valores,
-                    borderColor: 'yellow',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true }
-                }
-            }
-        });
-
-        // Calcular estatísticas
-        min = Math.min(...valores);
-        max = Math.max(...valores);
-        media = (valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(2);
-
-        document.getElementById("minTemp").innerText = min;
-        document.getElementById("maxTemp").innerText = max;
-        document.getElementById("mediaTemp").innerText = media;
-    }
-
-    function graficoGeral() {
-
-        const labels = dadosDashBoard.map(p => new Date(p.dataRegistro).toLocaleString("pt-BR"));
-        const valoresTemperatura = dadosDashBoard.map(p => p.valorTemperatura);
-        const valoresUmidade = dadosDashBoard.map(p => p.valorUmidade);
-        const valoresLuminosidade = dadosDashBoard.map(p => p.valorLuminosidade);
-
-        if (graficoHistorico) {
-            graficoHistorico.destroy();
-        }
-
-        const ctx = document.getElementById('graficoHistorico').getContext('2d');
-        graficoHistorico = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Temperatura (Cº)',
-                    data: valoresTemperatura,
-                    borderColor: 'red',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2
+            const ctx = document.getElementById('graficoHistorico').getContext('2d');
+            graficoTempoReal = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temperatura (°C)',
+                        data: valores,
+                        borderColor: 'steelblue',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    }],
                 },
-                {
-                    label: 'Umidade (%)',
-                    data: valoresUmidade,
-                    borderColor: 'steelblue',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2
-                },
-                {
-                    label: 'Luminosidade (%)',
-                    data: valoresLuminosidade,
-                    borderColor: 'yellow',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true }
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true }
+                    }
                 }
-            }
-        });
+            });
 
-        // Calcular estatísticas
-        min = Math.min(...valoresLuminosidade);
-        max = Math.max(...valoresLuminosidade);
-        media = (valoresLuminosidade.reduce((a, b) => a + b, 0) / valoresLuminosidade.length).toFixed(2);
+            min = Math.min(...valores);
+            max = Math.max(...valores);
+            media = (valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(2);
+        }
+
+
+        document.getElementById("minTemp").innerText = min;
+        document.getElementById("maxTemp").innerText = max;
+        document.getElementById("mediaTemp").innerText = media;
+    }
+
+    const consultaTemperatura = async function () {
+        await new Promise(resolve =>
+            $.ajax({
+                url: "/Dashboard/ObterDadosDispositivo",
+                data: {
+                    "ip": ipRequisicao,
+                    "tipoSensor": "Temp",
+                    "idSensor": "urn:ngsi-ld:Temp:001",
+                    "atributo": "temperature",
+                    "quantidadeValores": "100"
+                },
+                method: "GET"
+            }).done(function (response) {
+                if (response) {
+                    valoresTemp = response.slice(-15);
+
+                    montarTabelaRegistros(response)
+
+                    carregarDados();
+                }
+                resolve();
+            })
+        );
     }
 
     const montarTabelaRegistros = function (registros) {
 
-        if (table) {
+        if (table && registros) {
             table.clear();
 
             registros.forEach(registro => {
                 table.row.add([
-                    new Date(registro.dataRegistro).toLocaleString("pt-BR"),
-                    registro.valorTemperatura,
-                    registro.valorUmidade,
-                    registro.valorLuminosidade
+                    new Date(registro.recvTime).toLocaleString("pt-BR"),
+                    registro.attrValue,
                 ]);
             });
 
@@ -250,134 +119,56 @@ var dashboard2 = function () {
 
     return {
         filtrar: filtrar,
-        onChangeCombo: onChangeCombo,
+        carregarDados: carregarDados,
+        consultaTemperatura: consultaTemperatura,
         graficoTemperatura: graficoTemperatura,
-        graficoUmidade: graficoUmidade,
-        graficoLuminosidade: graficoLuminosidade,
-        graficoGeral: graficoGeral,
         montarTabelaRegistros: montarTabelaRegistros,
     }
 }();
 
 var dashboard1 = function () {
 
-    const init = async function () {
-        await Promise.all([
-            dashboard1.consultaTemperatura(),
-            dashboard1.consultaUmidade(),
-            dashboard1.consultaLuminosidade()
-        ]);
-    }
-
-    const onChangeCombo = function () {
+    const carregarDados = function () {
         const valorCombo = document.getElementById('tipoDado').value;
         document.getElementById("titulo").textContent = "Histórico de " + valorCombo
 
         var corStatus;
 
-        if (valorCombo == "Temperatura") {
-            let status = "Normal";
+        let status = "Normal";
+        document.getElementById("statusTemp").innerText = `Status: ${status}`;
+
+        let valorAtual = 0;
+
+        if (valoresTemp)
+            valorAtual = valoresTemp.length > 0 ? valoresTemp[valoresTemp.length - 1].attrValue : '';
+
+        document.getElementById("tempAtual").innerText = `${valorAtual} °C`;
+
+        if ((valorAtual >= 45 && valorAtual < 48) || valorAtual == 41) {
+            status = "Em alerta"
             document.getElementById("statusTemp").innerText = `Status: ${status}`;
-
-            let valorAtual = 0;
-
-            if (valoresTemp)
-                valorAtual = valoresTemp.length > 0 ? valoresTemp[valoresTemp.length - 1].attrValue : '';
-
-            document.getElementById("tempAtual").innerText = `${valorAtual} °C`;
-
-            if ((valorAtual >= 45 && valorAtual < 48) || valorAtual == 41) {
-                status = "Em alerta"
-                document.getElementById("statusTemp").innerText = `Status: ${status}`;
-            }
-            else if (valorAtual < 45 && valorAtual > 41) {
-                status = "Normal"
-                document.getElementById("statusTemp").innerText = `Status: ${status}`;
-            }
-            else if (valorAtual >= 48 || valorAtual == 40) {
-                status = "Crítico"
-                document.getElementById("statusTemp").innerText = `Status: ${status}`;
-            }
-
-            document.getElementById("tipoValor").innerText = "Temperatura Cº";
-
-            if (status == "Normal")
-                corStatus = 'steelblue';
-            else if (status == "Em alerta")
-                corStatus = 'yellow';
-            else
-                corStatus = 'red';
-
-            graficoTemperatura(corStatus);
-            montarTabelaRegistros(valoresTemp);
         }
-        else if (valorCombo == "Umidade") {
-            let status = "Normal";
+        else if (valorAtual < 45 && valorAtual > 41) {
+            status = "Normal"
             document.getElementById("statusTemp").innerText = `Status: ${status}`;
-
-            let valorAtual = 0;
-
-            if (valoresUmid)
-                valorAtual = valoresUmid.length > 0 ? valoresUmid[valoresUmid.length - 1].attrValue : '';
-
-            document.getElementById("tempAtual").innerText = `${valorAtual} %`;
-
-            if (valorAtual >= 45 || valorAtual == 41) {
-                status = "Em alerta"
-                document.getElementById("statusTemp").innerText = `Status: ${status}`;
-            }
-            else if (valorAtual >= 48 || valorAtual == 40) {
-                status = "Crítico"
-                document.getElementById("statusTemp").innerText = `Status: ${status}`;
-            }
-
-            document.getElementById("tipoValor").innerText = "Umidade %";
-
-            if (status == "Normal")
-                corStatus = 'steelblue';
-            else if (status == "Em alerta")
-                corStatus = 'yellow';
-            else
-                corStatus = 'red';
-
-            graficoUmidade(corStatus);
-            montarTabelaRegistros(valoresUmid);
         }
-        else if (valorCombo == "Luminosidade") {
-            let status = "Normal";
+        else if (valorAtual >= 48 || valorAtual == 40) {
+            status = "Crítico"
             document.getElementById("statusTemp").innerText = `Status: ${status}`;
-
-            let valorAtual = 0;
-
-            if (valoresLum)
-                valorAtual = valoresLum.length > 0 ? valoresLum[valoresLum.length - 1].attrValue : '';
-
-            document.getElementById("tempAtual").innerText = `${valorAtual} %`;
-
-            if (valorAtual >= 45 || valorAtual == 41) {
-                status = "Em alerta"
-                document.getElementById("statusTemp").innerText = `Status: ${status}`;
-            }
-            else if (valorAtual >= 48 || valorAtual == 40) {
-                status = "Crítico"
-                document.getElementById("statusTemp").innerText = `Status: ${status}`;
-            }
-
-            document.getElementById("tipoValor").innerText = "Luminosidade %";
-
-            if (status == "Normal")
-                corStatus = 'steelblue';
-            else if (status == "Em alerta")
-                corStatus = 'yellow';
-            else
-                corStatus = 'red';
-
-            graficoLuminosidade(corStatus);
-            montarTabelaRegistros(valoresLum);
         }
-        else if (valorCombo == "Geral") {
-            graficoGeral();
-        }
+
+        document.getElementById("tipoValor").innerText = "Temperatura Cº";
+
+        if (status == "Normal")
+            corStatus = 'steelblue';
+        else if (status == "Em alerta")
+            corStatus = 'yellow';
+        else
+            corStatus = 'red';
+
+        graficoTemperatura(corStatus);
+        montarTabelaRegistros(valoresTemp);
+
     }
 
     const graficoTemperatura = function (cor = 'steelblue') {
@@ -414,124 +205,6 @@ var dashboard1 = function () {
         }
     }
 
-    const graficoUmidade = function (cor = 'steelblue') {
-
-        if (valoresUmid) {
-            const labels = valoresUmid.map(p => new Date(p.recvTime).toLocaleString("pt-BR"));
-            const valores = valoresUmid.map(p => p.attrValue);
-
-            if (graficoTempoReal) {
-                graficoTempoReal.destroy();
-            }
-
-            const ctx = document.getElementById('graficoTempoReal').getContext('2d');
-            graficoTempoReal = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Umidade (%)',
-                        data: valores,
-                        borderColor: cor,
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: true }
-                    }
-                }
-            });
-        }
-    }
-
-    const graficoLuminosidade = function (cor = 'steelblue') {
-
-        if (valoresLum) {
-            const labels = valoresLum.map(p => new Date(p.recvTime).toLocaleString("pt-BR"));
-            const valores = valoresLum.map(p => p.attrValue);
-
-            if (graficoTempoReal) {
-                graficoTempoReal.destroy();
-            }
-
-            const ctx = document.getElementById('graficoTempoReal').getContext('2d');
-            graficoTempoReal = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Luminosidade (%)',
-                        data: valores,
-                        borderColor: cor,
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: true }
-                    }
-                }
-            });
-        }
-    }
-
-    const graficoGeral = function () {
-
-        const labels = dadosDashBoard.map(p => new Date(p.dataRegistro).toLocaleString("pt-BR"));
-        const valoresTemperatura = dadosDashBoard.map(p => p.valorTemperatura);
-        const valoresUmidade = dadosDashBoard.map(p => p.valorUmidade);
-        const valoresLuminosidade = dadosDashBoard.map(p => p.valorLuminosidade);
-
-        if (graficoTempoReal) {
-            graficoTempoReal.destroy();
-        }
-
-        const ctx = document.getElementById('graficoTempoReal').getContext('2d');
-        graficoTempoReal = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Temperatura (Cº)',
-                    data: valoresTemperatura,
-                    borderColor: 'red',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2
-                },
-                {
-                    label: 'Umidade (%)',
-                    data: valoresUmidade,
-                    borderColor: 'steelblue',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2
-                },
-                {
-                    label: 'Luminosidade (%)',
-                    data: valoresLuminosidade,
-                    borderColor: 'yellow',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true }
-                }
-            }
-        });
-    }
-
     const consultaAtualiza = function () {
 
         $.ajax({
@@ -546,41 +219,15 @@ var dashboard1 = function () {
         });
     }
 
-    const consultaLuminosidade = async function () {
-        await new Promise(resolve =>
-            $.ajax({
-                url: "/Dashboard/ObterDadosDispositivo",
-                data: {
-                    "ip": ipRequisicao,
-                    "tipoSensor": "Lamp",
-                    "idSensor": "urn:ngsi-ld:Lamp:001",
-                    "atributo": "luminosity",
-                    "quantidadeValores": "15"
-                },
-                method: "GET"
-            }).done(function (response) {
-                if (response) {
-                    valoresLum = response;
-
-                    if ($('#tipoDado').val() == "Luminosidade")
-                        montarTabelaRegistros(response)
-
-                    onChangeCombo();
-                }
-                resolve();
-            })
-        );
-    }
-
     const consultaTemperatura = async function () {
         await new Promise(resolve =>
             $.ajax({
                 url: "/Dashboard/ObterDadosDispositivo",
                 data: {
                     "ip": ipRequisicao,
-                    "tipoSensor": "Dht",
-                    "idSensor": "urn:ngsi-ld:Dht:002",
-                    "atributo": "humidity",
+                    "tipoSensor": "Temp",
+                    "idSensor": "urn:ngsi-ld:Temp:001",
+                    "atributo": "temperature",
                     "quantidadeValores": "15"
                 },
                 method: "GET"
@@ -591,33 +238,7 @@ var dashboard1 = function () {
                     if ($('#tipoDado').val() == "Temperatura")
                         montarTabelaRegistros(response)
 
-                    onChangeCombo();
-                }
-                resolve();
-            })
-        );
-    }
-
-    const consultaUmidade = async function () {
-        await new Promise(resolve =>
-            $.ajax({
-                url: "/Dashboard/ObterDadosDispositivo",
-                data: {
-                    "ip": ipRequisicao,
-                    "tipoSensor": "Dht",
-                    "idSensor": "urn:ngsi-ld:Dht:002",
-                    "atributo": "temperature",
-                    "quantidadeValores": "15"
-                },
-                method: "GET"
-            }).done(function (response) {
-                if (response) {
-                    valoresUmid = response.slice(-15);
-
-                    if ($('#tipoDado').val() == "Umidade")
-                        montarTabelaRegistros(response)
-
-                    onChangeCombo();
+                    carregarDados();
                 }
                 resolve();
             })
@@ -646,18 +267,12 @@ var dashboard1 = function () {
     }
 
     return {
-        onChangeCombo: onChangeCombo,
+        carregarDados: carregarDados,
         graficoTemperatura: graficoTemperatura,
-        graficoUmidade: graficoUmidade,
-        graficoLuminosidade: graficoLuminosidade,
-        graficoGeral: graficoGeral,
         consultaAtualiza: consultaAtualiza,
         recarregarTabela: recarregarTabela,
         montarTabelaRegistros: montarTabelaRegistros,
         consultaTemperatura: consultaTemperatura,
-        consultaLuminosidade: consultaLuminosidade,
-        consultaUmidade: consultaUmidade,
-        init: init,
     }
 }();
 

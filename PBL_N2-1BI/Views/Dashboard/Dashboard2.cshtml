@@ -65,25 +65,19 @@
 
 <script>
     $(document).ready(function () {
-        var valorDado = '@ViewBag.TipoDado';
+        $('#tipoDado').val('Temperatura');
 
-        if (valorDado)
-            $('#tipoDado').val(valorDado);
-        else
-            $('#tipoDado').val('Temperatura');
+        dashboard2.carregarDados();
 
-        dashboard2.onChangeCombo();
+        dashboard2.consultaTemperatura();
 
          table = $('#tabelaRegistros').DataTable({
                 order: [[0, 'desc']],
                 columns: [
                     { title: "Data/Hora" },
                     { title: "Temperatura (Cº)" },
-                        { title: "Umidade (%)" },
-                    { title: "Luminosidade (%)" }
                 ]
             });
-            dashboard2.montarTabelaRegistros(dados);
         });
 </script>
 
@@ -91,13 +85,10 @@
 
 <div class="container">
     <div class="row" style="text-align:left">
-        <label style="padding:10px" for="tipoDado">Selecionar dado:</label>
-        <select id="tipoDado" name="tipoDado" onchange="dashboard2.onChangeCombo()">
+        <select id="tipoDado" name="tipoDado" onchange="dashboard2.carregarDados()">
             <option value="Temperatura">Temperatura</option>
-            <option value="Umidade">Umidade</option>
-            <option value="Luminosidade">Luminosidade</option>
-            <option value="Geral">Geral</option>
         </select>
+        <label style="padding:10px" for="Temperatura">Temperatura:</label>
         <label style="padding:10px" for="DataInicio">Data Início:</label>
         <input class="input historico" type="date" id="DataInicio" value="@ViewBag.DataInicio" name="Data" />
 
@@ -129,8 +120,6 @@
             <tr>
                 <th>Data/Hora</th>
                 <th>Temperatura (Cº)</th>
-                <th>Umidade (%)</th>
-                <th>Luminosidade (%)</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -143,11 +132,6 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdn.datatables.net/plug-ins/1.10.25/sorting/datetime-moment.js"></script>
-
-    <script>
-        const dados = @Html.Raw(JsonConvert.SerializeObject(Model));
-                dadosDashBoard = dados.slice(-15);
-    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 }

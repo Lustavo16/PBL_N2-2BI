@@ -54,22 +54,13 @@
 
         $.fn.dataTable.moment('DD/MM/YYYY HH:mm:ss');
 
-        var valorDado = '@ViewBag.TipoDado';
+        $('#tipoDado').val('Temperatura');
 
-        if(valorDado)
-            $('#tipoDado').val(valorDado);
-        else
-            $('#tipoDado').val('Temperatura');
-
-        dashboard1.init();
-
-        dashboard1.onChangeCombo();
+        dashboard1.carregarDados();
 
         setInterval(() => {
             dashboard1.consultaTemperatura();
-            dashboard1.consultaLuminosidade();
-            dashboard1.consultaUmidade();
-        }, 5000);
+        }, 2000);
 
         dashboard1.montarTabelaRegistros()
 
@@ -88,9 +79,6 @@
         <label style="padding:10px" for="tipoDado">Selecionar dado:</label>
         <select id="tipoDado" name="tipoDado" onchange="dashboard1.onChangeCombo()">
             <option value="Temperatura">Temperatura</option>
-            <option value="Umidade">Umidade</option>
-            <option value="Luminosidade">Luminosidade</option>
-            <option value="Geral">Geral</option>
         </select>
     </div>
     <div class="row mb-4">

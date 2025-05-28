@@ -22,5 +22,9 @@ namespace PBL_N2_1BI.Models
         public string Senha { get; set; }
 
         public bool IsPrimeiroAcesso { get; set; }
+
+        public string FotoBase64 { get; set; }
+
+        public byte[] Foto { get; set; }
     }
 }
