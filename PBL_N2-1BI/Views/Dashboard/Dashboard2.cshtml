@@ -3,7 +3,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @{
-    ViewData["Title"] = "Histórico de Temperaturas";
+    ViewData["Title"] = "Temperatura - Histórico de aferições";
 }
 
 <style>
@@ -65,7 +65,6 @@
 
 <script>
     $(document).ready(function () {
-        $('#tipoDado').val('Temperatura');
 
         dashboard2.carregarDados();
 
@@ -81,14 +80,8 @@
         });
 </script>
 
-<h1 id="titulo" class="mb-4">@ViewData["Title"]</h1>
-
 <div class="container">
     <div class="row" style="text-align:left">
-        <select id="tipoDado" name="tipoDado" onchange="dashboard2.carregarDados()">
-            <option value="Temperatura">Temperatura</option>
-        </select>
-        <label style="padding:10px" for="Temperatura">Temperatura:</label>
         <label style="padding:10px" for="DataInicio">Data Início:</label>
         <input class="input historico" type="date" id="DataInicio" value="@ViewBag.DataInicio" name="Data" />
 
@@ -134,4 +127,5 @@
     <script src="https://cdn.datatables.net/plug-ins/1.10.25/sorting/datetime-moment.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
 }

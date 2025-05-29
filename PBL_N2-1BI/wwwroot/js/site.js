@@ -14,7 +14,6 @@ var listaTemps = [];
 var dashboard2 = function () {
 
     const carregarDados = function () {
-        document.getElementById("titulo").textContent = "Histórico de " + valorCombo
 
         graficoTemperatura();
         document.querySelector('.val-min').innerHTML = `Mínima: <span id="minTemp">${min}</span> ºC`;
@@ -38,12 +37,11 @@ var dashboard2 = function () {
             const labels = valoresTemp.map(p => new Date(p.recvTime).toLocaleString("pt-BR"));
             const valores = valoresTemp.map(p => p.attrValue);
 
-            if (graficoTempoReal) {
-                graficoTempoReal.destroy();
-            }
+            if (graficoHistorico)
+                graficoHistorico.destroy();
 
             const ctx = document.getElementById('graficoHistorico').getContext('2d');
-            graficoTempoReal = new Chart(ctx, {
+            graficoHistorico = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
@@ -53,13 +51,49 @@ var dashboard2 = function () {
                         borderColor: 'steelblue',
                         borderWidth: 2,
                         fill: false,
-                        tension: 0.2
+                        tension: 0.2,
+                        pointRadius: 0,
                     }],
                 },
                 options: {
                     responsive: true,
+                    animation: false,
                     plugins: {
-                        legend: { display: true }
+                        legend: { display: true },
+                        decimation: {
+                            enabled: true,
+                            algorithm: 'lttb',
+                            samples: 1000
+                        },
+                        zoom: {
+                            zoom: {
+                                wheel: {
+                                    enabled: true,
+                                },
+                                pinch: {
+                                    enabled: true,
+                                },
+                                mode: 'x',
+                            },
+                            pan: {
+                                enabled: true,
+                                mode: 'x',
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxTicksLimit: 20
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                stepSize: 5
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 50
+                        }
                     }
                 }
             });
@@ -89,7 +123,7 @@ var dashboard2 = function () {
                 method: "GET"
             }).done(function (response) {
                 if (response) {
-                    valoresTemp = response.slice(-15);
+                    valoresTemp = response;
 
                     montarTabelaRegistros(response)
 
@@ -141,7 +175,7 @@ var dashboard1 = function () {
 
     const init = async function () {
         await consultaUltimaTemperatura();
-    };init
+    }; init
 
     const graficoGauge = function (tempAtual) {
         const ctx = document.getElementById('gaugeChart').getContext('2d');
@@ -193,10 +227,17 @@ var dashboard1 = function () {
         });
     };
 
+    const resetarZoom = function () {
+        graficoTempoReal.resetZoom();
+    }
+
     const graficoTemperatura = function () {
 
         if (valoresTemp) {
-            const labels = valoresTemp.map(p => new Date(p.recvTime).toLocaleString("pt-BR"));
+
+            const labels = valoresTemp.map(p =>
+                new Date(p.recvTime).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+            );
             const valores = valoresTemp.map(p => p.attrValue);
 
             if (valoresTemp.length > 0)
@@ -215,30 +256,69 @@ var dashboard1 = function () {
             })
 
             if (graficoTempoReal) {
-                graficoTempoReal.destroy();
+                graficoTempoReal.data.labels = labels;
+                graficoTempoReal.data.datasets[0].data = valores;
+                graficoTempoReal.update();
             }
-
-            const ctx = document.getElementById('graficoTempoReal').getContext('2d');
-            graficoTempoReal = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Temperatura (°C)',
-                        data: valores,
-                        borderColor: 'steelblue',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.2
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: true }
+            else {
+                const ctx = document.getElementById('graficoTempoReal').getContext('2d');
+                graficoTempoReal = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Temperatura (°C)',
+                            data: valores,
+                            borderColor: 'steelblue',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.2,
+                            pointRadius: 0,
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        animation: false,
+                        plugins: {
+                            legend: { display: true },
+                            decimation: {
+                                enabled: true,
+                                algorithm: 'lttb',
+                                samples: 1000
+                            },
+                            zoom: {
+                                zoom: {
+                                    wheel: {
+                                        enabled: true,
+                                    },
+                                    pinch: {
+                                        enabled: true,
+                                    },
+                                    mode: 'x',
+                                },
+                                pan: {
+                                    enabled: true,
+                                    mode: 'x',
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    maxTicksLimit: 20
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    stepSize: 5
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 50
+                            }
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
@@ -329,6 +409,7 @@ var dashboard1 = function () {
         graficoGauge: graficoGauge,
         consultaUltimaTemperatura: consultaUltimaTemperatura,
         init: init,
+        resetarZoom: resetarZoom,
     }
 }();
 
