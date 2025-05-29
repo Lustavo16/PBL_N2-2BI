@@ -54,13 +54,12 @@
 
         $.fn.dataTable.moment('DD/MM/YYYY HH:mm:ss');
 
+        dashboard1.init();
         dashboard1.carregarDados();
 
         setInterval(() => {
-            //dashboard1.consultaTemperatura();
-            //dashboard1.consultaAtualiza();
-            dashboard1.simulaTemp();
-        }, 5000);
+            dashboard1.init();
+        }, 3500);
 
         dashboard1.montarTabelaRegistros()
 
@@ -75,7 +74,6 @@
 </script>
 
 <div class="container">
-    <button onclick="dashboard1.simulaTemp(true)">resetar</button>
     <div class="row mb-4">
         <div style="height:250px; text-align: right">
             <canvas id="gaugeChart"></canvas>

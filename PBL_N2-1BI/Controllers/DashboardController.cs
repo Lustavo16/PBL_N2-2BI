@@ -59,14 +59,6 @@ public class DashboardController : Controller
 
         try
         {
-            /*RegistroViewModel registro = new RegistroViewModel()
-            {
-                DataRegistro = DateTime.Now.AddMilliseconds(-DateTime.Now.Millisecond),
-                ValorTemperatura = random.Next(41, 51),
-            };
-
-            dao.InserirRegistro(registro);*/
-
             return Json(dao.ListarRegistros());
         }
         catch (Exception ex)

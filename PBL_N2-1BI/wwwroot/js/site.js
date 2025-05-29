@@ -3,7 +3,7 @@ var max = 0;
 var media = 0;
 var graficoTempoReal = null;
 var graficoHistorico = null;
-var valoresTemp;
+var valoresTemp = [];
 var dadosDashBoard;
 var table;
 var ipRequisicao = "35.171.156.216";
@@ -130,42 +130,18 @@ var dashboard1 = function () {
     const carregarDados = function () {
         var corStatus;
 
-        let status = "Normal";
-        //document.getElementById("statusTemp").innerText = `Status: ${status}`;
-
         let valorAtual = 0;
 
-        /*if (valoresTemp)
-            valorAtual = valoresTemp.length > 0 ? valoresTemp[valoresTemp.length - 1].attrValue : '';*/
+        if (valoresTemp)
+            valorAtual = valoresTemp.length > 0 ? valoresTemp[valoresTemp.length - 1].attrValue : '';
 
-        //document.getElementById("tempAtual").innerText = `${valorAtual} °C`;       
-
-        if ((valorAtual >= 45 && valorAtual < 48) || valorAtual == 41) {
-            status = "Em alerta"
-            document.getElementById("statusTemp").innerText = `Status: ${status}`;
-        }
-        else if (valorAtual < 45 && valorAtual > 41) {
-            status = "Normal"
-            document.getElementById("statusTemp").innerText = `Status: ${status}`;
-        }
-        else if (valorAtual >= 48 || valorAtual == 40) {
-            status = "Crítico"
-            document.getElementById("statusTemp").innerText = `Status: ${status}`;
-        }
-
-        //document.getElementById("tipoValor").innerText = "Temperatura Cº";
-
-        if (status == "Normal")
-            corStatus = 'steelblue';
-        else if (status == "Em alerta")
-            corStatus = 'yellow';
-        else
-            corStatus = 'red';
-
-        graficoTemperatura(corStatus);
+        graficoTemperatura();
         montarTabelaRegistros(valoresTemp);
-
     }
+
+    const init = async function () {
+        await consultaUltimaTemperatura();
+    };init
 
     const graficoGauge = function (tempAtual) {
         const ctx = document.getElementById('gaugeChart').getContext('2d');
@@ -217,22 +193,19 @@ var dashboard1 = function () {
         });
     };
 
-    const graficoTemperatura = function (cor = 'steelblue') {
+    const graficoTemperatura = function () {
 
-        if (listaTemps) {
-            /*const labels = valoresTemp.map(p => new Date(p.recvTime).toLocaleString("pt-BR"));
-            const valores = valoresTemp.map(p => p.attrValue);*/
+        if (valoresTemp) {
+            const labels = valoresTemp.map(p => new Date(p.recvTime).toLocaleString("pt-BR"));
+            const valores = valoresTemp.map(p => p.attrValue);
 
-            if (listaTemps.length > 0)
-                graficoGauge(listaTemps[listaTemps.length - 1].valorTemperatura);
+            if (valoresTemp.length > 0)
+                graficoGauge(valoresTemp[valoresTemp.length - 1].attrValue);
             else
                 graficoGauge(0);
 
-            let setpoint = 45.00;
+            let setpoint = 35.00;
             let K = 0.8144;
-
-            const labels = listaTemps.map(p => new Date(p.dataRegistro).toLocaleString("pt-BR"));
-            const valores = listaTemps.map(p => p.valorTemperatura);
 
             const valoresErro = valores.map(p => {
                 let A = setpoint - p;
@@ -240,7 +213,6 @@ var dashboard1 = function () {
 
                 return A / 1 + K;
             })
-
 
             if (graficoTempoReal) {
                 graficoTempoReal.destroy();
@@ -258,14 +230,6 @@ var dashboard1 = function () {
                         borderWidth: 2,
                         fill: false,
                         tension: 0.2
-                    },
-                    {
-                        label: 'Erro',
-                        data: valoresErro,
-                        borderColor: 'red',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.2
                     }],
                 },
                 options: {
@@ -276,55 +240,6 @@ var dashboard1 = function () {
                 }
             });
         }
-    }
-
-    const simulaTemp = function (limpar = false) {
-
-        let agora = new Date();
-        let dia = agora.getDate();
-        let mes = agora.getMonth() + 1; // Atenção! Janeiro = 0
-        let ano = agora.getFullYear();
-        let horas = agora.getHours();
-        let minutos = agora.getMinutes();
-        let segundos = agora.getSeconds();
-
-        dataAtual = `${ano}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
-
-        if (limpar) {
-            listaTemps = []
-            valorTempAtual = 22;
-            contador = 0;
-        }
-
-        let objTemp = {
-            valorTemperatura: valorTempAtual,
-            dataRegistro: dataAtual
-        }
-
-
-        if (contador == 0) {
-            listaTemps.push(objTemp);
-
-            if (valorTempAtual <= 45)
-                valorTempAtual += 2;
-            else if (valorTempAtual > 45 && valorTempAtual < 50) {
-                valorTempAtual += 1;
-            }
-            else if (valorTempAtual >= 50 && valorTempAtual <= 52) {
-                valorTempAtual += 0.5;
-            }
-            else {
-                valorTempAtual += 0;
-            }
-        }
-
-        contador += 1;
-
-        if (contador == 1)
-            contador = 0;
-
-        carregarDados();
-        montarTabelaRegistros(listaTemps);
     }
 
     const consultaAtualiza = function () {
@@ -350,13 +265,37 @@ var dashboard1 = function () {
                     "tipoSensor": "Temp",
                     "idSensor": "urn:ngsi-ld:Temp:001",
                     "atributo": "temperature",
-                    "quantidadeValores": "15"
+                    "quantidadeValores": "30"
                 },
                 method: "GET"
             }).done(function (response) {
                 if (response) {
-                    valoresTemp = response.slice(-15);
+                    valoresTemp = response;
                     montarTabelaRegistros(response)
+
+                    carregarDados();
+                }
+                resolve();
+            })
+        );
+    }
+
+    const consultaUltimaTemperatura = async function () {
+        await new Promise(resolve =>
+            $.ajax({
+                url: "/Dashboard/ObterDadosDispositivo",
+                data: {
+                    "ip": ipRequisicao,
+                    "tipoSensor": "Temp",
+                    "idSensor": "urn:ngsi-ld:Temp:001",
+                    "atributo": "temperature",
+                    "quantidadeValores": "1"
+                },
+                method: "GET"
+            }).done(function (response) {
+                if (response) {
+                    valoresTemp.push(response[0]);
+                    montarTabelaRegistros(valoresTemp)
 
                     carregarDados();
                 }
@@ -372,8 +311,8 @@ var dashboard1 = function () {
 
             registros.forEach(registro => {
                 table.row.add([
-                    new Date(registro.dataRegistro).toLocaleString("pt-BR"),
-                    registro.valorTemperatura,
+                    new Date(registro.recvTime).toLocaleString("pt-BR"),
+                    registro.attrValue,
                 ]);
             });
 
@@ -381,20 +320,15 @@ var dashboard1 = function () {
         }
     }
 
-    const recarregarTabela = function () {
-
-        $('#tabelaRegistros').ajax.reload();
-    }
-
     return {
         carregarDados: carregarDados,
         graficoTemperatura: graficoTemperatura,
         consultaAtualiza: consultaAtualiza,
-        recarregarTabela: recarregarTabela,
         montarTabelaRegistros: montarTabelaRegistros,
         consultaTemperatura: consultaTemperatura,
-        simulaTemp: simulaTemp,
         graficoGauge: graficoGauge,
+        consultaUltimaTemperatura: consultaUltimaTemperatura,
+        init: init,
     }
 }();
 
