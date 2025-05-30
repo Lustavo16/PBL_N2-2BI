@@ -31,6 +31,10 @@ var dashboard2 = function () {
         window.location.href = url;
     }
 
+    const resetarZoom = function () {
+        graficoTempoReal.resetZoom();
+    }
+
     const graficoTemperatura = function () {
 
         if (valoresTemp) {
@@ -156,6 +160,7 @@ var dashboard2 = function () {
         consultaTemperatura: consultaTemperatura,
         graficoTemperatura: graficoTemperatura,
         montarTabelaRegistros: montarTabelaRegistros,
+        resetarZoom: resetarZoom,
     }
 }();
 

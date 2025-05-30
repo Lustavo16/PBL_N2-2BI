@@ -16,7 +16,7 @@ namespace PBL_N2_1BI.DAO
 
         public static SqlParameter[] CriaParametros(UsuarioViewModel usuario)
         {
-            SqlParameter[] parametros = new SqlParameter[6];
+            SqlParameter[] parametros = new SqlParameter[7];
             parametros[0] = new SqlParameter("Id", usuario.Id);
             parametros[1] = new SqlParameter("Login", usuario.Login);
 
@@ -28,6 +28,7 @@ namespace PBL_N2_1BI.DAO
             parametros[3] = new SqlParameter("Nome", usuario.Nome);
             parametros[4] = new SqlParameter("Email", usuario.Email);
             parametros[5] = new SqlParameter("PrimeiroAcesso", usuario.IsPrimeiroAcesso);
+            parametros[6] = new SqlParameter("Foto", usuario.Foto ?? (object)DBNull.Value);
 
             return parametros;
         }
@@ -37,15 +38,15 @@ namespace PBL_N2_1BI.DAO
             usuario.Id = GerarId();
 
             string sql =
-                "INSERT INTO dbo.Usuarios (Id, Login, Senha, Nome, Email, PrimeiroAcesso) " +
-                $"VALUES (@Id, @Login, @Senha, @Nome, @Email, @PrimeiroAcesso)";
+                "INSERT INTO dbo.Usuarios (Id, Login, Senha, Nome, Email, PrimeiroAcesso, Foto) " +
+                $"VALUES (@Id, @Login, @Senha, @Nome, @Email, @PrimeiroAcesso, @Foto)";
 
             HelperDAO.ExecutaSQL(sql, CriaParametros(usuario));
         }
 
         public void Alterar(UsuarioViewModel usuario)
         {
-            string sql = "UPDATE dbo.Usuarios SET Login=@Login, Senha=@Senha, Nome=@Nome, Email=@Email, PrimeiroAcesso=@PrimeiroAcesso where Id=@Id";
+            string sql = "UPDATE dbo.Usuarios SET Login=@Login, Senha=@Senha, Nome=@Nome, Email=@Email, PrimeiroAcesso=@PrimeiroAcesso, Foto=@Foto where Id=@Id";
 
             HelperDAO.ExecutaSQL(sql, CriaParametros(usuario));
         }
@@ -115,6 +116,7 @@ namespace PBL_N2_1BI.DAO
             usuario.Nome = registro["nome"].ToString();
             usuario.Email = registro["email"].ToString();
             usuario.IsPrimeiroAcesso = Convert.ToBoolean(registro["PrimeiroAcesso"]);
+            usuario.Foto = registro["Foto"] as byte[];
 
             return usuario;
         }

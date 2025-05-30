@@ -83,15 +83,17 @@
     <form action="/Usuario/Salvar" method="post" enctype="multipart/form-data" style="wtext-align:center">
         <div class="container" style="width:80%; text-align:center">
             <h2>Cadastrar Usuário</h2>
+            <br>
             @if (!string.IsNullOrEmpty(Model.FotoBase64))
             {
-                <label>Preview do Logo:</label>
                 <br />
                 <img src="data:image/png;base64,@Model.FotoBase64"
                      alt="Logo do Time"
                      id="preview"
-                     style="max-width: 300px; max-height: 300px; object-fit: fill; border: 1px solid #ccc;" />
+                     name="FotoBase64"
+                     style="max-width: 300px; max-height: 300px; object-fit: fill;" />
                 <br />
+                <input style="width:50%; border:none;" type="file" name="FotoBase64" id="FotoUsuario" class="form-control" accept="image/*" onchange="previewImagem(event)" />
             }
             else
             {
@@ -100,15 +102,17 @@
                     <img src="~/Imagens/vecteezy_user-icon-on-transparent-background_19879186.png"
                          alt="Foto Usuario"
                          id="preview"
-                         style="width: 500px; height: 300px; object-fit: fill; border: 1px solid #ccc;" />
+                         name="FotoBase64"
+                         style="width: 500px; height: 300px; object-fit: fill;" />
+                    <br />
                     <br />
                     <label for="ImagemLogo">Selecione a foto:</label>
-                    <input style="width:50%" type="file" name="Foto" id="FotoUsuario" class="form-control" accept="image/*" onchange="previewImagem(event)" />
+                    <input style="width:50%; border:none;" type="file" name="Foto" id="FotoUsuario" class="form-control" accept="image/*" onchange="previewImagem(event)" />
+                    <input type="hidden" name="FotoBase64" id="FotoBase64" value="@Model.FotoBase64" />
                 </div>
                 <br />
             }
             <div style="text-align:left">
-                <br>
                 <input id="idUsuario" type="text" name="Id" value="@Model.Id" hidden>
                 <span asp-validation-for="Login" class="text-danger"></span><br>
                 <h5>Login:</h5>
@@ -141,7 +145,8 @@
 
                     reader.onload = function () {
                         var img = document.getElementById('preview');
-                        img.style.width = '300px'
+                        img.style.width = '400px'
+                        img.style.height = '400px'
                         img.src = reader.result;
                     };
 

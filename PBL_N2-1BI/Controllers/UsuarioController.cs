@@ -4,6 +4,7 @@ using PBL_N2_1BI.DAO;
 using PBL_N2_1BI.Models;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace PBL_N2_1BI.Controllers
 {
@@ -31,6 +32,7 @@ namespace PBL_N2_1BI.Controllers
         {
             UsuarioViewModel usuarioNovo = new UsuarioViewModel();
             usuarioNovo = new UsuarioDAO().PesquisarPorId(idUsuario);
+            usuarioNovo.FotoBase64 = usuarioNovo.Foto != null ? Convert.ToBase64String(usuarioNovo.Foto) : null;
 
             return View("Cadastro", usuarioNovo);
         }
@@ -40,6 +42,17 @@ namespace PBL_N2_1BI.Controllers
             UsuarioDAO dao = new UsuarioDAO();
             try
             {
+                var arquivo = Request.Form.Files["FotoBase64"];
+                if (arquivo != null && arquivo.Length > 0)
+                {
+                    using (var ms = new System.IO.MemoryStream())
+                    {
+                        arquivo.CopyTo(ms);
+                        usuario.Foto = ms.ToArray();
+                        usuario.FotoBase64 = Convert.ToBase64String(usuario.Foto);
+                    }
+                }
+
                 if (usuario.IsPrimeiroAcesso)
                 {
                     if (!usuario.Id.HasValue)
