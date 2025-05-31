@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using PBL_N2_1BI.DAO;
 using PBL_N2_1BI.Models;
 using System;
@@ -37,12 +38,13 @@ namespace PBL_N2_1BI.Controllers
             return View("Cadastro", usuarioNovo);
         }
 
+        [HttpPost]
         public IActionResult Salvar(UsuarioViewModel usuario)
         {
             UsuarioDAO dao = new UsuarioDAO();
             try
             {
-                var arquivo = Request.Form.Files["FotoBase64"];
+                var arquivo = Request.Form.Files["Foto"];
                 if (arquivo != null && arquivo.Length > 0)
                 {
                     using (var ms = new System.IO.MemoryStream())
@@ -51,6 +53,10 @@ namespace PBL_N2_1BI.Controllers
                         usuario.Foto = ms.ToArray();
                         usuario.FotoBase64 = Convert.ToBase64String(usuario.Foto);
                     }
+                }
+                else if (!string.IsNullOrEmpty(usuario.FotoBase64))
+                {
+                    usuario.Foto = Convert.FromBase64String(usuario.FotoBase64);
                 }
 
                 if (usuario.IsPrimeiroAcesso)
@@ -62,8 +68,26 @@ namespace PBL_N2_1BI.Controllers
                     }
                     else
                     {
-                        dao.Alterar(usuario);
+                        dao.AlterarCadastro(usuario);
                         TempData["Mensagem"] = "Usuário alterado com sucesso!";
+
+                        var login = HttpContext.Session.GetString("Login");
+
+                        if (login != null)
+                        {
+                            LoginViewModel usuarioLogin = JsonConvert.DeserializeObject<LoginViewModel>(login);
+
+                            if (usuarioLogin != null && usuarioLogin.Login != null)
+                            {
+                                if (usuarioLogin.Login == usuario.Login)
+                                {
+                                    usuarioLogin.FotoBase64 = usuario.FotoBase64;
+
+                                    HttpContext.Session.Clear();
+                                    HttpContext.Session.SetString("Login", JsonConvert.SerializeObject(usuarioLogin));
+                                }
+                            }
+                        }
                     }
                 }
                 else

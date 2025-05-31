@@ -57,8 +57,8 @@
         background-color: #fce6b5;
     }
 
-    .placeholder{
-        width:120%;
+    .placeholder {
+        width: 120%;
     }
 
 </style>
@@ -67,8 +67,6 @@
     $(document).ready(function () {
 
         dashboard2.carregarDados();
-
-        dashboard2.consultaTemperatura();
 
          table = $('#tabelaRegistros').DataTable({
                 order: [[0, 'desc']],
@@ -83,13 +81,13 @@
 <div class="container">
     <div class="row" style="text-align:left">
         <label style="padding:10px" for="DataInicio">Data Início:</label>
-        <input class="input historico" type="date" id="DataInicio" value="@ViewBag.DataInicio" name="Data" />
+        <input class="input historico" type="datetime-local" id="DataInicio" value="@ViewBag.DataInicio" name="Data" />
 
         <label style="padding:10px" for="DataFim">Data Fim:</label>
-        <input class="input historico" type="date" id="DataFim" value="@ViewBag.DataFim" name="Data" />
+        <input class="input historico" type="datetime-local" id="DataFim" value="@ViewBag.DataFim" name="Data" />
 
         <label style="padding:10px"> </label>
-        <button type="button" onclick="dashboard2.filtrar()">Filtrar</button>
+        <button type="button" onclick="dashboard2.consultaHistorico()">Filtrar</button>
     </div>
     <div class="row">
         <div class="col-md-8">

@@ -103,13 +103,13 @@
                 <br>
                 <span asp-validation-for="Email" class="text-danger"></span><br>
                 <h5>E-mail:</h5>
-                <input type="text" style="width:80%" asp-for="Email" placeholder="E-mail" maxlength="100">
+                <input type="text" style="width:80%" id="email" asp-for="Email" placeholder="E-mail" maxlength="100">
                 <br>
             </div>
         </div>
         <br>
         <div style="text-align:center">
-            <input type="button" value="Cadastrar" onclick="verificarSenha()" style="width:15%;background-color:black; color:white">
+            <input type="button" id="verificaSenha" value="Cadastrar" onclick="verificarSenha()" style="width:15%;background-color:black; color:white">
             <input type="submit" id="cadastrar" value="Cadastrar" hidden style="width:15%;background-color:black; color:white">
             <button type="button" style="width:15%" onclick="window.location.href='/Login/Login'">Cancelar</button>
         </div>
@@ -135,6 +135,13 @@
                           });
                     }
                 }
+
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      document.getElementById('verificaSenha').click();
+                    }
+                  });
             </script>
         }
     </form>

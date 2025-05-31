@@ -90,29 +90,28 @@
                 <img src="data:image/png;base64,@Model.FotoBase64"
                      alt="Logo do Time"
                      id="preview"
-                     name="FotoBase64"
-                     style="max-width: 300px; max-height: 300px; object-fit: fill;" />
+                     style="max-width: 300px;  min-width:300px; height: auto; border: 2px solid darkgray; border-radius: 5px;"
+                     onclick=""/>
                 <br />
-                <input style="width:50%; border:none;" type="file" name="FotoBase64" id="FotoUsuario" class="form-control" accept="image/*" onchange="previewImagem(event)" />
+                <br />
+                <br />
+                <input style="width: auto; border: none" type="file" name="Foto" id="FotoUsuario" class="form-control" accept="image/*" onchange="previewImagem(event)" />
             }
             else
             {
-                <div style="text-align:left">
-                    <br />
-                    <img src="~/Imagens/vecteezy_user-icon-on-transparent-background_19879186.png"
-                         alt="Foto Usuario"
-                         id="preview"
-                         name="FotoBase64"
-                         style="width: 500px; height: 300px; object-fit: fill;" />
-                    <br />
-                    <br />
-                    <label for="ImagemLogo">Selecione a foto:</label>
-                    <input style="width:50%; border:none;" type="file" name="Foto" id="FotoUsuario" class="form-control" accept="image/*" onchange="previewImagem(event)" />
-                    <input type="hidden" name="FotoBase64" id="FotoBase64" value="@Model.FotoBase64" />
-                </div>
+                <br />
+                <img src="~/Imagens/vecteezy_user-icon-on-transparent-background_19879186.png"
+                     alt="Foto Usuario"
+                     id="preview"
+                     style="max-width: 300px; min-width:300px; height: auto; border: 2px solid darkgray; border-radius: 5px;" />
+                <br />
+                <br />
+                <label for="ImagemLogo">Selecione a foto:</label>
+                <input style="width: auto; border:none;" type="file" value="@Model.Foto" name="Foto" id="FotoUsuario" class="form-control" accept="image/*" onchange="previewImagem(event)" />
                 <br />
             }
             <div style="text-align:left">
+                <input type="hidden" name="FotoBase64" id="FotoBase64" value="@Model.FotoBase64" />
                 <input id="idUsuario" type="text" name="Id" value="@Model.Id" hidden>
                 <span asp-validation-for="Login" class="text-danger"></span><br>
                 <h5>Login:</h5>
@@ -145,8 +144,6 @@
 
                     reader.onload = function () {
                         var img = document.getElementById('preview');
-                        img.style.width = '400px'
-                        img.style.height = '400px'
                         img.src = reader.result;
                     };
 

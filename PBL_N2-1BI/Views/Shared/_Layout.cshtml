@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <style>
     .swal-wide {
         padding: 20px;
@@ -33,7 +37,7 @@
             <div class="container" style="background-color:#ffaf10; height:80px">
                 @if (TempData["Login"] == null || TempData["Login"].ToString() != "Login")
                 {
-                    <a class="navbar-brand" style="color:white; font-size:25px" asp-area="" asp-controller="Home" asp-action="Index">Projeto Estufa de Secagem</a>
+                    <a class="navbar-brand" style="color:white; font-size:25px">Projeto Estufa de Secagem</a>
                 }
                 else
                 {
@@ -56,9 +60,21 @@
                         }
                     </ul>
                 </div>
+                @{
+                    LoginViewModel usuarioLogin = new LoginViewModel();
+                    var login = HttpContextAccessor.HttpContext.Session.GetString("Login");
+
+                    if (login != null)
+                        usuarioLogin = JsonConvert.DeserializeObject<LoginViewModel>(login);
+                }
                 @if (TempData["Login"] == null || TempData["Login"].ToString() != "Login")
                 {
-                    <button style="width:80px; height:40px; background-color:black; color:white" onclick="confirmarSair()">Sair</button>
+                    @if (usuarioLogin != null && usuarioLogin.FotoBase64 != null)
+                    {
+                        <img src="data:image/png;base64,@usuarioLogin.FotoBase64" title="@usuarioLogin.Login" alt="foto" style="height:60px; width:auto; border-radius: 5px;" />
+                    }
+                    <br>
+                    <img src="/Imagens/exit.png" alt="foto" style="max-height:40px; padding-right: 5px; padding-top: 5px; padding-left: 15px; float: left; cursor: pointer;" onclick="confirmarSair()" />
                 }
             </div>
         </nav>

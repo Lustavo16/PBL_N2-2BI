@@ -32,14 +32,21 @@ var dashboard2 = function () {
     }
 
     const resetarZoom = function () {
-        graficoTempoReal.resetZoom();
+        graficoHistorico.resetZoom();
     }
 
     const graficoTemperatura = function () {
 
         if (valoresTemp) {
-            const labels = valoresTemp.map(p => new Date(p.recvTime).toLocaleString("pt-BR"));
-            const valores = valoresTemp.map(p => p.attrValue);
+            const labels = valoresTemp.map(function (p) {
+                var data = new Date(p[0]);
+                data = new Date(data.setHours(data.getHours() + 3));
+
+                return data.toLocaleString("pt-BR");
+            });
+
+            //const labels = valoresTemp.map(p => new Date(p[0]).setHours(new Date(p[0]).getHours() + 3).toLocaleString("pt-BR"));
+            const valores = valoresTemp.map(p => p[1].toFixed(2));
 
             if (graficoHistorico)
                 graficoHistorico.destroy();
@@ -143,15 +150,41 @@ var dashboard2 = function () {
         if (table && registros) {
             table.clear();
 
-            registros.forEach(registro => {
+            registros.map(function (item) {
+                var data = new Date(item[0]).toLocaleString("pt-BR")
+                var valor = item[1];
+
                 table.row.add([
-                    new Date(registro.recvTime).toLocaleString("pt-BR"),
-                    registro.attrValue,
+                    data,
+                    valor.toFixed(2),
                 ]);
-            });
+            })
 
             table.draw();
         }
+    }
+
+    const consultaHistorico = function () {
+        $.ajax({
+            url: "/Dashboard/ObterDadosAgregadosMedia",
+            data: {
+                "ip": ipRequisicao,
+                "tipoSensor": "Temp",
+                "idSensor": "urn:ngsi-ld:Temp:001",
+                "atributo": "temperature",
+                "dateFrom": $("#DataInicio").val(),
+                "dateTo": $("#DataFim").val()
+            },
+            method: "GET"
+        }).done(function (response) {
+
+            if (response) {
+                valoresTemp = response;
+                montarTabelaRegistros(response)
+
+                carregarDados();
+            }
+        })
     }
 
     return {
@@ -161,6 +194,7 @@ var dashboard2 = function () {
         graficoTemperatura: graficoTemperatura,
         montarTabelaRegistros: montarTabelaRegistros,
         resetarZoom: resetarZoom,
+        consultaHistorico: consultaHistorico,
     }
 }();
 

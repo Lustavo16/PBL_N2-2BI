@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using PBL_N2_1BI.DAO;
 using PBL_N2_1BI.Models;
@@ -34,9 +35,18 @@ namespace PBL_N2_1BI.Controllers
 
                 if (dao.ValidarLogin(loginUsuario))
                 {
+
+                    UsuarioViewModel usuarioLogin = dao.PesquisarPorLogin(loginUsuario.Login);
+
+                    loginUsuario = new LoginViewModel()
+                    {
+                        Login = usuarioLogin.Login,
+                        FotoBase64 = usuarioLogin.Foto != null ? Convert.ToBase64String(usuarioLogin.Foto) : null,
+                    };
+
                     string login = JsonConvert.SerializeObject(loginUsuario);
                     HttpContext.Session.SetString("Login", login);
-
+                   
                     TempData["Login"] = null;
                     return RedirectToAction("Index", "Home");
                 }
@@ -103,7 +113,6 @@ namespace PBL_N2_1BI.Controllers
 
         public IActionResult Salvar(UsuarioViewModel usuario)
         {
-
             try
             {
                 UsuarioDAO dao = new UsuarioDAO();
