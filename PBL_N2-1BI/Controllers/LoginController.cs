@@ -23,7 +23,9 @@ namespace PBL_N2_1BI.Controllers
 
                 if(conexao != null)
                 {
-                    if (!VerificarExistenciaLogin("Admin"))
+                    var verificaLogin = new UsuarioDAO().PesquisarPorLogin("Admin");
+
+                    if (string.IsNullOrEmpty(verificaLogin.Login))
                     {
                         new UsuarioDAO().InsertInicial();
                     }
