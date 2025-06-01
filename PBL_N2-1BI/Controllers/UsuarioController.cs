@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PBL_N2_1BI.DAO;
+using PBL_N2_1BI.Filters;
 using PBL_N2_1BI.Models;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,12 @@ namespace PBL_N2_1BI.Controllers
 {
     public class UsuarioController : Controller
     {
+        [SessionAuthorize]
         public IActionResult Consulta(UsuarioViewModel usuarioConsulta)
         {
+            ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
+            HttpContext.Session.Remove("MensagemErro");
+
             List<UsuarioViewModel> listaUauarios = new List<UsuarioViewModel>();
             listaUauarios = new UsuarioDAO().ListarUsuarios(usuarioConsulta);
 
@@ -23,17 +28,25 @@ namespace PBL_N2_1BI.Controllers
             return View(listaUauarios);
         }
 
+        [SessionAuthorize]
         public IActionResult Adicionar()
         {
             UsuarioViewModel usuarioNovo = new UsuarioViewModel();
+            ViewBag.Perfis = new PerfilDAO().ListarPerfis(new PerfilViewModel());
+
             return View("Cadastro", usuarioNovo);
         }
 
+        [SessionAuthorize]
         public IActionResult Editar(int idUsuario)
         {
             UsuarioViewModel usuarioNovo = new UsuarioViewModel();
+
             usuarioNovo = new UsuarioDAO().PesquisarPorId(idUsuario);
+
             usuarioNovo.FotoBase64 = usuarioNovo.Foto != null ? Convert.ToBase64String(usuarioNovo.Foto) : null;
+
+            ViewBag.Perfis = new PerfilDAO().ListarPerfis(new PerfilViewModel());
 
             return View("Cadastro", usuarioNovo);
         }
@@ -83,7 +96,6 @@ namespace PBL_N2_1BI.Controllers
                                 {
                                     usuarioLogin.FotoBase64 = usuario.FotoBase64;
 
-                                    HttpContext.Session.Clear();
                                     HttpContext.Session.SetString("Login", JsonConvert.SerializeObject(usuarioLogin));
                                 }
                             }
@@ -106,6 +118,7 @@ namespace PBL_N2_1BI.Controllers
             return RedirectToAction("Consulta");
         }
 
+        [SessionAuthorize]
         public IActionResult Excluir(int Id)
         {
             try

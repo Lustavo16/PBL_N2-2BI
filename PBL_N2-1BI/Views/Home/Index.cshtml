@@ -55,6 +55,12 @@
 </head>
 
 <div class="container-simples">
+    @if (ViewBag.MensagemErro != null)
+    {
+        <div id="msgErro" class="alert alert-danger">
+            @ViewBag.MensagemErro
+        </div>
+    }
     <div class="container-linha">
         <div class="usuario-box">
             <a href="/Usuario/Consulta">
@@ -62,7 +68,12 @@
             </a>
             <h2 class="usuario-titulo">Usuários</h2>
         </div>
-
+        <div class="usuario-box">
+            <a href="/Perfil/Consulta">
+                <img src="/Imagens/profile.png" class="usuario-img" />
+            </a>
+            <h2 class="usuario-titulo">Perfis</h2>
+        </div>
         <div class="usuario-box">
             <a href="/Simulacao/Consulta">
                 <img src="/Imagens/ux.png" class="usuario-img" />
@@ -100,4 +111,16 @@
 @section Scripts {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+                let mensagem = document.getElementById('msgErro')
+
+                if(mensagem)
+                {
+                    setTimeout(() => {
+                        mensagem.style.display = 'none';;
+                    }, 3000);
+                }
+            });
+    </script>
 }

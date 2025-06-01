@@ -4,6 +4,8 @@ using PBL_N2_1BI.Models;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
+using PBL_N2_1BI.Filters;
+using Microsoft.AspNetCore.Http;
 
 namespace PBL_N2_1BI.Controllers
 {
@@ -18,9 +20,12 @@ namespace PBL_N2_1BI.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
+            HttpContext.Session.Remove("MensagemErro");
+
             return View();
         }
-
+      
         public IActionResult Sobre()
         {
             return View();
@@ -31,17 +36,5 @@ namespace PBL_N2_1BI.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-        public async Task<IActionResult> ObterDispositivos()
-        {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("fiware-service", "smart");
-            client.DefaultRequestHeaders.Add("fiware-servicepath", "/");
-
-            var response = await client.GetAsync("http://44.207.2.184:4041/iot/devices");
-            var content = await response.Content.ReadAsStringAsync();
-
-            return Content(content, "application/json");
-        }       
     }
 }

@@ -3,11 +3,8 @@ using System;
 
 namespace PBL_N2_1BI.Models
 {
-    public class RegistroViewModel
+    public class RegistroViewModel :PadraoViewModel
     {
-        [JsonProperty("id")]
-        public int Id { get; set; }
-
         [JsonProperty("dataRegistro")]
         public DateTime DataRegistro { get; set; }
 

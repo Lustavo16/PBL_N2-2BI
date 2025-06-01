@@ -1,4 +1,4 @@
-﻿@model List<MotorViewModel>
+﻿@model List<PerfilViewModel>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>Lista de Motores</title>
+    <title>Lista de Perfis</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -68,7 +68,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Consultar Motores</h2>
+        <h2>Consultar Perfis</h2>
         @if (TempData["Mensagem"] != null)
         {
             <div id="mensagem" class="alert alert-success">@TempData["Mensagem"]</div>
@@ -88,10 +88,8 @@
             }
         </script>
         <div style="padding-top:20px; padding-bottom:20px">
-            <form action="/Motor/Consulta" method="post">
-                <input id="Modelo" type="text" name="Modelo" placeholder="Filtrar por Modelo" value="@ViewBag.Filtros.Modelo">
-                <input id="Fabricante" type="text" name="Fabricante" placeholder="Filtrar por Fabricante" value="@ViewBag.Filtros.Fabricante">
-                <input id="NumeroDeSerie" type="text" name="NumeroDeSerie" placeholder="Filtrar por Numero De Série" value="@ViewBag.Filtros.NumeroDeSerie">
+            <form action="/Perfil/Consulta" method="post">
+                <input id="Nome" type="text" name="Nome" placeholder="Filtrar por Nome" value="@ViewBag.Filtros.Nome">
 
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -102,7 +100,7 @@
                     </div>
 
                     <div style="display: flex; gap: 10px;">
-                        <button type="button" onclick="window.location.href='/Motor/Adicionar'" style="width:120px; background-color:black; color:white">
+                        <button type="button" onclick="window.location.href='/Perfil/Adicionar'" style="width:120px; background-color:black; color:white">
                             Adicionar
                         </button>
                         <button type="button" onclick="window.location.href='/Home/Index'" style="width:120px;">
@@ -117,27 +115,21 @@
         <table>
             <thead>
                 <tr>
-                    <th>Modelo</th>
-                    <th>Fabricante</th>
-                    <th>Temperatura de Secagem</th>
-                    <th>Numero de Série</th>
+                    <th>Nome</th>
                     <th style="width:6%">Ações</th>
                 </tr>
             </thead>
             <tbody id="tabelaUsuarios">
-                @foreach (var motor in Model)
+                @foreach (var perfil in Model)
                 {
                     <tr>
-                        <td>@motor.Modelo</td>
-                        <td>@motor.Fabricante</td>
-                        <td>@(motor.TemperaturaSecagem + " ºC")</td>
-                        <td>@motor.NumeroDeSerie</td>
+                        <td>@perfil.Nome</td>
                         <td>
-                            <a href="Editar?idMotor=@motor.Id" style="padding:5px">
+                            <a href="Editar?idPerfil=@perfil.Id" style="padding:5px">
                                 <img src="/Imagens/edit.png" class="usuario-img" style="width:80%;padding:5px;" />
                             </a>
                             <br>
-                            <a onclick="confirmarExclusao(@motor.Id)" style="padding:5px;padding-top:10px">
+                            <a onclick="confirmarExclusao(@perfil.Id)" style="padding:5px;padding-top:10px">
                                 <img src="/Imagens/delete.png" class="usuario-img" style="width:85%;padding:5px;" />
                             </a>
                         </td>
@@ -149,7 +141,7 @@
             function confirmarExclusao(id) {
                 Swal.fire({
                     title: 'Tem certeza?',
-                    text: "Você realmente deseja excluir este Motor?",
+                    text: "Você realmente deseja excluir este Perfil?",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
@@ -158,7 +150,7 @@
                     cancelButtonText: 'Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = '/Motor/Excluir?Id=' + id;
+                        window.location.href = '/Perfil/Excluir?Id=' + id;
                     }
                 });
             }
@@ -189,3 +181,4 @@
     </div>
 </body>
 </html>
+

@@ -10,6 +10,7 @@ var ipRequisicao = "35.171.156.216";
 var valorTempAtual = 41;
 var contador = 0;
 var listaTemps = [];
+var listaPermissoes = [];
 
 var dashboard2 = function () {
 
@@ -497,5 +498,93 @@ var loginSection = function () {
         confirmarCadastrarSenha: confirmarCadastrarSenha,
         verificaLogin: verificaLogin,
         cadastrarSenha: cadastrarSenha,
+    }
+}();
+
+var perfilSection = function () {
+
+    const preenchePermissoes = function () {
+        let listaPermissoesCarregadas = $('#Permissoes').val();
+
+        if (listaPermissoesCarregadas) {
+            listaPermissoesCarregadas = JSON.parse(listaPermissoesCarregadas);
+
+            listaPermissoesCarregadas.map(function (permissao) {
+                let idCampo = permissao.NomeController + permissao.NomeAction;
+
+                $('#' + idCampo).prop('checked', true);
+            })
+
+            onchangePermissoes();
+        }
+    }
+
+    const onchangePermissoes = function () {
+        const ids = [
+            'UsuarioConsulta', 'UsuarioAdicionar', 'UsuarioEditar', 'UsuarioExcluir',
+            'MotorConsulta', 'MotorAdicionar', 'MotorEditar', 'MotorExcluir',
+            'PerfilConsulta', 'PerfilAdicionar', 'PerfilEditar', 'PerfilExcluir',
+            'SimulacaoConsulta', 'SimulacaoAdicionar', 'SimulacaoEditar', 'SimulacaoExcluir'
+        ];
+
+        ids.forEach(id => {
+            const checkbox = document.getElementById(id);
+            if (checkbox) {
+                let objeto = {};
+
+                // Separar o prefixo (C) e a ação (A)
+                const partes = id.match(/([A-Za-z]+)(Consulta|Adicionar|Editar|Excluir)/);
+                if (partes) {
+                    const modulo = partes[1];
+                    const acao = partes[2];
+
+                    // Tratamento para ação: mudar "Consultar" para "Consulta"
+                    objeto.NomeController = modulo;
+                    objeto.NomeAction = acao;
+                }
+
+                if (checkbox.checked) {
+                    let itemExistente = listaPermissoes.some(function (item) {
+                        if (item.NomeController == objeto.NomeController) {
+                            if (item.NomeAction == objeto.NomeAction)
+                                return true;
+                            else
+                                return false;
+                        }
+                        else
+                            return false
+                    })
+
+                    if (!itemExistente)
+                        listaPermissoes.push(objeto);
+                }
+                else {
+                    let itemExistente = listaPermissoes.some(function (item) {
+                        if (item.NomeController == objeto.NomeController) {
+                            if (item.NomeAction == objeto.NomeAction)
+                                return true;
+                            else
+                                return false;
+                        }
+                        else
+                            return false
+                    })
+
+                    if (itemExistente)
+                        listaPermissoes = listaPermissoes.filter(item => !(item.NomeController == objeto.NomeController && item.NomeAction == objeto.NomeAction));
+                }
+            }
+        });
+
+        const jsonResult = JSON.stringify(listaPermissoes);
+
+        $('#Permissoes').val(jsonResult);
+
+        console.log(jsonResult);
+    };
+
+    return {
+        onchangePermissoes: onchangePermissoes,
+        preenchePermissoes: preenchePermissoes,
     }
 }();

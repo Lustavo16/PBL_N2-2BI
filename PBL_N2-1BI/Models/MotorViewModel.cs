@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PBL_N2_1BI.Models
 {
-    public class MotorViewModel
+    public class MotorViewModel : PadraoViewModel
     {
-        public int? Id { get; set; }
-
         [StringLength(50, ErrorMessage = "O Modelo deve ter no máximo 50 caracteres.")]
         [Required(ErrorMessage = "O Modelo é um campo obrigatório!")]
         public string Modelo { get; set; }

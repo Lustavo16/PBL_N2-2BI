@@ -1,0 +1,151 @@
+﻿@model PerfilViewModel
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Perfis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        input {
+            width: 75%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        select {
+            width: 50%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        label {
+            width: 25%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: black;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <form action="/Perfil/Salvar" method="post">
+        @Html.AntiForgeryToken()
+        <div class="container" style="width:65%; text-align:center">
+            <h2>Cadastrar Perfil</h2>
+            <div style="text-align:center">
+                <input id="idMotor" type="text" name="Id" value="@Model.Id" hidden>
+                <span asp-validation-for="Nome" class="text-danger"></span><br>
+                <h5>Nome:</h5>
+                <input type="text" style="width:65%" asp-for="Nome" placeholder="Nome" value="@Model.Nome" maxlength="50">
+                <br>
+            </div>
+        </div>
+        <br>
+        <div class="container" style="width:65%;text-align:center;">
+            <div>
+                <h2>Permissões</h2>
+                <br>
+                <h4>Usuários:</h4>
+                <input type="checkbox" id="UsuarioConsulta" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-right:10px">Consultar
+                <input type="checkbox" id="UsuarioAdicionar" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Adicionar
+                <input type="checkbox" id="UsuarioEditar" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Editar
+                <input type="checkbox" id="UsuarioExcluir" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Excluir
+                <br>
+                <br>
+                <h4>Motores:</h4>
+                <input type="checkbox" id="MotorConsulta" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-right:10px">Consultar
+                <input type="checkbox" id="MotorAdicionar" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Adicionar
+                <input type="checkbox" id="MotorEditar" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Editar
+                <input type="checkbox" id="MotorExcluir" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Excluir
+                <br>
+                <br>
+                <h4>Perfis:</h4>
+                <input type="checkbox" id="PerfilConsulta" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-right:10px">Consultar
+                <input type="checkbox" id="PerfilAdicionar" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Adicionar
+                <input type="checkbox" id="PerfilEditar" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Editar
+                <input type="checkbox" id="PerfilExcluir" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Excluir
+                <br>
+                <br>
+                <h4>Simulacoes:</h4>
+                <input type="checkbox" id="SimulacaoConsulta" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-right:10px">Consultar
+                <input type="checkbox" id="SimulacaoAdicionar" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Adicionar
+                <input type="checkbox" id="SimulacaoEditar" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Editar
+                <input type="checkbox" id="SimulacaoExcluir" onchange="perfilSection.onchangePermissoes()" style="text-align:center; width:20px; margin-left:10px; margin-right:10px">Excluir
+                <br>
+            </div>
+            <br>
+        </div>
+        <input type="hidden" id="Permissoes" asp-for="Permissoes" value="@Model.Permissoes">
+        <br>
+        <div style="text-align:center;">
+            <input type="submit" value="Salvar" style="width:15%;background-color:black; color:white">
+            <button type="button" style="width:15%" onclick="window.location.href='/Perfil/Consulta'">Cancelar</button>
+        </div>
+    </form>
+    @section Scripts {
+        <script src="@Url.Content("~/js/site.js")"></script>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+        <script>
+            $(document).ready(function () {
+                perfilSection.preenchePermissoes();
+            });
+        </script>
+    }
+</body>
+
+

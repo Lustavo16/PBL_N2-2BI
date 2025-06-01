@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PBL_N2_1BI.DAO;
 using PBL_N2_1BI.Models;
 using System;
+using System.Data.SqlClient;
 
 namespace PBL_N2_1BI.Controllers
 {
@@ -17,7 +18,16 @@ namespace PBL_N2_1BI.Controllers
             try
             {
                 HttpContext.Session.Clear();
-                TempData["Login"] = "Login";
+
+                SqlConnection conexao = ConexaoBD.GetConexao();
+
+                if(conexao != null)
+                {
+                    if (!VerificarExistenciaLogin("Admin"))
+                    {
+                        new UsuarioDAO().InsertInicial();
+                    }
+                }
 
                 return View(loginUsuario);
             }
@@ -35,8 +45,20 @@ namespace PBL_N2_1BI.Controllers
 
                 if (dao.ValidarLogin(loginUsuario))
                 {
+                    PerfilDAO daoPerfil = new PerfilDAO();
 
+                    PerfilViewModel perfilUsuario = new PerfilViewModel();
                     UsuarioViewModel usuarioLogin = dao.PesquisarPorLogin(loginUsuario.Login);
+
+                    if (usuarioLogin.IdPerfil.HasValue)
+                    {
+                        perfilUsuario = daoPerfil.PesquisarPorId(usuarioLogin.IdPerfil.Value);
+
+                        if (perfilUsuario.Nome != null)
+                        {
+                            HttpContext.Session.SetString("Permissoes", perfilUsuario.Permissoes);
+                        }
+                    }
 
                     loginUsuario = new LoginViewModel()
                     {
@@ -46,6 +68,8 @@ namespace PBL_N2_1BI.Controllers
 
                     string login = JsonConvert.SerializeObject(loginUsuario);
                     HttpContext.Session.SetString("Login", login);
+
+
                    
                     TempData["Login"] = null;
                     return RedirectToAction("Index", "Home");

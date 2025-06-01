@@ -2,10 +2,8 @@
 
 namespace PBL_N2_1BI.Models
 {
-    public class UsuarioViewModel
+    public class UsuarioViewModel : PadraoViewModel
     {
-        public int? Id { get; set; }
-
         [StringLength(50, ErrorMessage = "O Login deve ter no máximo 50 caracteres.")]
         [Required(ErrorMessage = "O Login é um campo obrigatório!")]
         public string Login { get; set; }
@@ -20,6 +18,8 @@ namespace PBL_N2_1BI.Models
         public string Email { get; set; }
         [Required(ErrorMessage = "A Senha é um campo obrigatório!")]
         public string Senha { get; set; }
+
+        public int? IdPerfil { get; set; }
 
         public bool IsPrimeiroAcesso { get; set; }
 

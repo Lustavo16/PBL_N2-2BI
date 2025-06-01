@@ -16,7 +16,7 @@ namespace PBL_N2_1BI.DAO
 
         public static SqlParameter[] CriaParametros(UsuarioViewModel usuario)
         {
-            SqlParameter[] parametros = new SqlParameter[7];
+            SqlParameter[] parametros = new SqlParameter[8];
             parametros[0] = new SqlParameter("Id", usuario.Id);
             parametros[1] = new SqlParameter("Login", usuario.Login);
 
@@ -40,12 +40,17 @@ namespace PBL_N2_1BI.DAO
                 parametros[6].Value = DBNull.Value;
             }
 
+            if (!usuario.IdPerfil.HasValue)
+                parametros[7] = new SqlParameter("IdPerfil", DBNull.Value);
+            else
+                parametros[7] = new SqlParameter("IdPerfil", usuario.IdPerfil);
+
             return parametros;
         }
 
         public static SqlParameter[] CriaParametrosAlteracao(UsuarioViewModel usuario)
         {
-            SqlParameter[] parametros = new SqlParameter[5];
+            SqlParameter[] parametros = new SqlParameter[6];
             parametros[0] = new SqlParameter("Id", usuario.Id);
             parametros[1] = new SqlParameter("Login", usuario.Login);
 
@@ -63,6 +68,30 @@ namespace PBL_N2_1BI.DAO
                 parametros[4].Value = DBNull.Value;
             }
 
+            if (!usuario.IdPerfil.HasValue)
+                parametros[5] = new SqlParameter("IdPerfil", DBNull.Value);
+            else
+                parametros[5] = new SqlParameter("IdPerfil", usuario.IdPerfil);
+
+            return parametros;
+        }
+
+        public static SqlParameter[] CriaParametrosUsuarioNovo(UsuarioViewModel usuario)
+        {
+
+            SqlParameter[] parametros = new SqlParameter[6];
+            parametros[0] = new SqlParameter("Id", usuario.Id);
+            parametros[1] = new SqlParameter("Login", usuario.Login);
+
+            if (string.IsNullOrEmpty(usuario.Senha))
+                parametros[2] = new SqlParameter("Senha", DBNull.Value);
+            else
+                parametros[2] = new SqlParameter("Senha", HashPassword(usuario.Senha));
+
+            parametros[3] = new SqlParameter("Nome", usuario.Nome);
+            parametros[4] = new SqlParameter("Email", usuario.Email);
+            parametros[5] = new SqlParameter("PrimeiroAcesso", usuario.IsPrimeiroAcesso);
+
             return parametros;
         }
 
@@ -71,22 +100,22 @@ namespace PBL_N2_1BI.DAO
             usuario.Id = GerarId();
 
             string sql =
-                "INSERT INTO dbo.Usuarios (Id, Login, Senha, Nome, Email, PrimeiroAcesso, Foto) " +
-                $"VALUES (@Id, @Login, @Senha, @Nome, @Email, @PrimeiroAcesso, @Foto)";
+                "INSERT INTO dbo.Usuarios (Id, Login, Senha, Nome, Email, PrimeiroAcesso, Foto, IdPerfil) " +
+                $"VALUES (@Id, @Login, @Senha, @Nome, @Email, @PrimeiroAcesso, @Foto, @IdPerfil)";
 
             HelperDAO.ExecutaSQL(sql, CriaParametros(usuario));
         }
 
         public void Alterar(UsuarioViewModel usuario)
         {
-            string sql = "UPDATE dbo.Usuarios SET Login=@Login, Senha=@Senha, Nome=@Nome, Email=@Email, PrimeiroAcesso=@PrimeiroAcesso, Foto=@Foto where Id=@Id";
+            string sql = "UPDATE dbo.Usuarios SET Login=@Login, Senha=@Senha, Nome=@Nome, Email=@Email, PrimeiroAcesso=@PrimeiroAcesso where Id=@Id";
 
-            HelperDAO.ExecutaSQL(sql, CriaParametros(usuario));
+            HelperDAO.ExecutaSQL(sql, CriaParametrosUsuarioNovo(usuario));
         }
 
         public void AlterarCadastro(UsuarioViewModel usuario)
         {
-            string sql = "UPDATE dbo.Usuarios SET Login=@Login, Nome=@Nome, Email=@Email, Foto=@Foto where Id=@Id";
+            string sql = "UPDATE dbo.Usuarios SET Login=@Login, Nome=@Nome, Email=@Email, Foto=@Foto, IdPerfil=@IdPerfil where Id=@Id";
 
             HelperDAO.ExecutaSQL(sql, CriaParametrosAlteracao(usuario));
         }
@@ -157,6 +186,9 @@ namespace PBL_N2_1BI.DAO
             usuario.Email = registro["email"].ToString();
             usuario.IsPrimeiroAcesso = Convert.ToBoolean(registro["PrimeiroAcesso"]);
             usuario.Foto = registro["Foto"] as byte[];
+
+            if (registro["IdPerfil"] != DBNull.Value)
+                usuario.IdPerfil = Convert.ToInt32(registro["IdPerfil"]);
 
             return usuario;
         }
@@ -284,6 +316,23 @@ namespace PBL_N2_1BI.DAO
                 return new UsuarioViewModel();
         }
 
+        public void InsertInicial()
+        {
+            UsuarioViewModel usuario = new UsuarioViewModel()
+            {
+                Id = GerarId(),
+                Nome = "Admin",
+                Login = "Admin",
+                Email = "Admin",
+                IsPrimeiroAcesso = false,
+                Senha = "senha",
+                IdPerfil = new PerfilDAO().InsertInicial()
+            };
+            string sql =
+                "INSERT INTO dbo.Usuarios (Id, Login, Senha, Nome, Email, PrimeiroAcesso, Foto, IdPerfil) " +
+                $"VALUES (@Id, @Login, @Senha, @Nome, @Email, @PrimeiroAcesso, @Foto, @IdPerfil)";
 
+            HelperDAO.ExecutaSQL(sql, CriaParametros(usuario));
+        }
     }
 }

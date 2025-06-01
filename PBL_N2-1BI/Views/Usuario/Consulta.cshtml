@@ -74,6 +74,12 @@
             <div id="mensagem" class="alert alert-success">@TempData["Mensagem"]</div>
             TempData["Mensagem"] = null;
         }
+        @if (ViewBag.MensagemErro != null)
+        {
+            <div id="msgErro" class="alert alert-danger">
+                @ViewBag.MensagemErro
+            </div>
+        }
         <script>
             function limpaCampos (){
                 $('#Nome').val('');
@@ -163,6 +169,18 @@
                     }, 3000);
                 }
             });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                    let mensagem = document.getElementById('msgErro')
+
+                    if(mensagem)
+                    {
+                        setTimeout(() => {
+                            mensagem.style.display = 'none';;
+                        }, 3000);
+                    }
+                });
         </script>
     </div>
 </body>

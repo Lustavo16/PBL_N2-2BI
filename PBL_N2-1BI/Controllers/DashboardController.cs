@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PBL_N2_1BI.DAO;
 using PBL_N2_1BI.Models;
 using System;
@@ -119,7 +120,6 @@ public class DashboardController : Controller
         int offset = 0;
         bool temMaisDados = true;
 
-        // Lista para armazenar todos os dados agregados por segundo
         var todosRegistros = new List<(DateTime timestamp, double valor)>();
 
         while (temMaisDados)
@@ -157,7 +157,6 @@ public class DashboardController : Controller
                 break;
             }
 
-            // Extrair todos os registros (timestamp, valor) e armazenar na lista
             foreach (var item in valuesElement.EnumerateArray())
             {
                 if (item.ValueKind == JsonValueKind.Object)
@@ -175,7 +174,6 @@ public class DashboardController : Controller
             offset += 100;
         }
 
-        // Agora, agrupamos os dados em janelas de 15 segundos e calculamos a média
         var agrupados = todosRegistros
             .OrderBy(x => x.timestamp)
             .GroupBy(x => (long)(x.timestamp - todosRegistros[0].timestamp).TotalSeconds / 15)
@@ -186,7 +184,6 @@ public class DashboardController : Controller
             })
             .ToList();
 
-        // Montar o JSON de saída com o formato esperado (a propriedade "values" é um array de arrays [timestamp, valor])
         var valuesJsonArray = new JsonArray();
 
         foreach (var grupo in agrupados)
@@ -194,7 +191,6 @@ public class DashboardController : Controller
             valuesJsonArray.Add(new JsonArray { grupo.timestamp, grupo.valorMedio });
         }
 
-        // Construir o JSON que corresponde à propriedade "values" no seu retorno atual
         var jsonFinal = valuesJsonArray.ToJsonString();
 
         return Content(jsonFinal, "application/json");
@@ -204,7 +200,6 @@ public class DashboardController : Controller
     {
         var converted = new List<DateTime>();
 
-        // Detectar o timezone correto dependendo do sistema operacional
         string timeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? "E. South America Standard Time"
             : "America/Sao_Paulo";
@@ -223,7 +218,6 @@ public class DashboardController : Controller
                     CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dt);
             }
 
-            // Converte de UTC para horário de Brasília
             var dtBrasilia = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(dt, DateTimeKind.Utc), brasiliaTimeZone);
 
             converted.Add(dtBrasilia);

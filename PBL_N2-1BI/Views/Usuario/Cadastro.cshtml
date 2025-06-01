@@ -91,7 +91,7 @@
                      alt="Logo do Time"
                      id="preview"
                      style="max-width: 300px;  min-width:300px; height: auto; border: 2px solid darkgray; border-radius: 5px;"
-                     onclick=""/>
+                     onclick="" />
                 <br />
                 <br />
                 <br />
@@ -125,8 +125,19 @@
                 <h5>E-mail:</h5>
                 <input type="text" style="width:80%" asp-for="Email" placeholder="E-mail" value="@Model.Email" maxlength="100">
                 <br>
+                <br>
+                <h5>Perfil:</h5>
+                <select name="IdPerfil">
+                    <option value="">Selecione um perfil</option>
+                    @foreach (var perfil in ViewBag.Perfis as List<PerfilViewModel>)
+                    {
+                        var selected = perfil.Id == Model.IdPerfil ? "selected='selected'" : "";
+                        @Html.Raw($"<option value='{perfil.Id}' {selected}>{perfil.Nome}</option>")
+                    }
+                </select>
                 <input type="hidden" name="IsPrimeiroAcesso" value="true" />
             </div>
+            <br>
         </div>
         <br>
         <div style="text-align:center">

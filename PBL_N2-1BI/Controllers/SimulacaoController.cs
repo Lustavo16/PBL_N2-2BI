@@ -3,15 +3,23 @@ using PBL_N2_1BI.DAO;
 using PBL_N2_1BI.Models;
 using System.Collections.Generic;
 using System;
+using PBL_N2_1BI.Filters;
+using Microsoft.AspNetCore.Http;
 
 namespace PBL_N2_1BI.Controllers
 {
     public class SimulacaoController : Controller
     {
+        [SessionAuthorize]
         public IActionResult Consulta(SimulacaoViewModel simulacaoConsulta)
         {
+            ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
+            HttpContext.Session.Remove("MensagemErro");
+
             List<SimulacaoViewModel> listaSimulacao = new List<SimulacaoViewModel>();
+
             listaSimulacao = new SimulacaoDAO().ListarSimulacao(simulacaoConsulta);
+
             ViewBag.Motores = new MotorDAO().ListarMotores(new MotorViewModel());
             ViewBag.Usuarios = new UsuarioDAO().ListarUsuarios(new UsuarioViewModel());
 
@@ -20,6 +28,7 @@ namespace PBL_N2_1BI.Controllers
             return View(listaSimulacao);
         }
 
+        [SessionAuthorize]
         public IActionResult Adicionar()
         {
             SimulacaoViewModel SimulacaoNovo = new SimulacaoViewModel();
@@ -29,6 +38,7 @@ namespace PBL_N2_1BI.Controllers
             return View("Cadastro", SimulacaoNovo);
         }
 
+        [SessionAuthorize]
         public IActionResult Editar(int idSimulacao)
         {
             SimulacaoViewModel SimulacaoNovo = new SimulacaoViewModel();
@@ -64,6 +74,7 @@ namespace PBL_N2_1BI.Controllers
             return RedirectToAction("Consulta");
         }
 
+        [SessionAuthorize]
         public IActionResult Excluir(int Id)
         {
             try

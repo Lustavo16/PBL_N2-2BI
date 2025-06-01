@@ -8,52 +8,53 @@ using Microsoft.AspNetCore.Http;
 
 namespace PBL_N2_1BI.Controllers
 {
-    public class MotorController : Controller
+    public class PerfilController : Controller
     {
         [SessionAuthorize]
-        public IActionResult Consulta(MotorViewModel motorConsulta)
+        public IActionResult Consulta(PerfilViewModel perfilConsulta)
         {
             ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
             HttpContext.Session.Remove("MensagemErro");
 
-            List<MotorViewModel> listaMotores = new List<MotorViewModel>();
-            listaMotores = new MotorDAO().ListarMotores(motorConsulta);
+            List<PerfilViewModel> listaPerfis = new List<PerfilViewModel>();
 
-            ViewBag.Filtros = motorConsulta;
+            listaPerfis = new PerfilDAO().ListarPerfis(perfilConsulta);
 
-            return View(listaMotores);
+            ViewBag.Filtros = perfilConsulta;
+
+            return View("Index", listaPerfis);
         }
 
         [SessionAuthorize]
         public IActionResult Adicionar()
         {
-            MotorViewModel motorNovo = new MotorViewModel();
-            return View("Cadastro", motorNovo);
+            PerfilViewModel perfilNovo = new PerfilViewModel();
+            return View("Cadastro", perfilNovo);
         }
 
         [SessionAuthorize]
-        public IActionResult Editar(int idMotor)
+        public IActionResult Editar(int idperfil)
         {
-            MotorViewModel motorNovo = new MotorViewModel();
-            motorNovo = new MotorDAO().PesquisarPorId(idMotor);
+            PerfilViewModel perfilNovo = new PerfilViewModel();
+            perfilNovo = new PerfilDAO().PesquisarPorId(idperfil);
 
-            return View("Cadastro", motorNovo);
+            return View("Cadastro", perfilNovo);
         }
 
-        public IActionResult Salvar(MotorViewModel motor)
+        public IActionResult Salvar(PerfilViewModel perfil)
         {
-            MotorDAO dao = new MotorDAO();
+            PerfilDAO dao = new PerfilDAO();
             try
             {
-                if (!motor.Id.HasValue)
+                if (!perfil.Id.HasValue)
                 {
-                    dao.Inserir(motor);
-                    TempData["Mensagem"] = "Motor salvo com sucesso!";
+                    dao.Inserir(perfil);
+                    TempData["Mensagem"] = "Perfil salvo com sucesso!";
                 }
                 else
                 {
-                    dao.Alterar(motor);
-                    TempData["Mensagem"] = "Motor alterado com sucesso!";
+                    dao.Alterar(perfil);
+                    TempData["Mensagem"] = "Perfil alterado com sucesso!";
                 }
             }
             catch (Exception ex)
@@ -68,8 +69,8 @@ namespace PBL_N2_1BI.Controllers
         {
             try
             {
-                new MotorDAO().Excluir(Id);
-                TempData["Mensagem"] = "Motor excluído com sucesso!";
+                new PerfilDAO().Excluir(Id);
+                TempData["Mensagem"] = "Perfil excluído com sucesso!";
             }
             catch (Exception ex)
             {
@@ -79,3 +80,4 @@ namespace PBL_N2_1BI.Controllers
         }
     }
 }
+

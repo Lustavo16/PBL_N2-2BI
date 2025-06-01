@@ -33,23 +33,23 @@
 </head>
 <body style="background-color:#fdf5e8;">
     <header>
+        @{
+            LoginViewModel usuarioLogin = new LoginViewModel();
+            var login = HttpContextAccessor.HttpContext.Session.GetString("Login");
+
+            if (login != null)
+                usuarioLogin = JsonConvert.DeserializeObject<LoginViewModel>(login);
+        }
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" style="background-color:#ffaf10; color:white">
             <div class="container" style="background-color:#ffaf10; height:80px">
-                @if (TempData["Login"] == null || TempData["Login"].ToString() != "Login")
-                {
-                    <a class="navbar-brand" style="color:white; font-size:25px">Projeto Estufa de Secagem</a>
-                }
-                else
-                {
-                    <a class="navbar-brand" style="color:white; font-size:25px">Projeto Estufa de Secagem</a>
-                }
+                <a class="navbar-brand" style="color:white; font-size:25px">Projeto Estufa de Secagem</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (TempData["Login"] == null || TempData["Login"].ToString() != "Login")
+                        @if (usuarioLogin.Login != null)
                         {
                             <li class="nav-item">
                                 <a class="nav-link" style="color:white; font-size:18px" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -59,17 +59,10 @@
                             </li>
                         }
                     </ul>
-                </div>
-                @{
-                    LoginViewModel usuarioLogin = new LoginViewModel();
-                    var login = HttpContextAccessor.HttpContext.Session.GetString("Login");
-
-                    if (login != null)
-                        usuarioLogin = JsonConvert.DeserializeObject<LoginViewModel>(login);
-                }
-                @if (TempData["Login"] == null || TempData["Login"].ToString() != "Login")
+                </div>               
+                @if (usuarioLogin.Login != null)
                 {
-                    @if (usuarioLogin != null && usuarioLogin.FotoBase64 != null)
+                    @if (usuarioLogin.FotoBase64 != null)
                     {
                         <img src="data:image/png;base64,@usuarioLogin.FotoBase64" title="@usuarioLogin.Login" alt="foto" style="height:60px; width:auto; border-radius: 5px;" />
                     }
