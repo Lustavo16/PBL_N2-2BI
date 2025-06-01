@@ -10,7 +10,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 2000px;
             margin: auto;
             background: white;
             padding: 20px;
@@ -21,7 +21,7 @@
         .usuario-box {
             display: flex;
             flex-direction: column;
-            align-items: center; /* Centraliza o texto em relação à imagem */
+            align-items: center;
             width: 330px;
         }
 
@@ -61,6 +61,7 @@
             @ViewBag.MensagemErro
         </div>
     }
+    <h3>Geral</h3>
     <div class="container-linha">
         <div class="usuario-box">
             <a href="/Usuario/Consulta">
@@ -86,10 +87,17 @@
             </a>
             <h2 class="usuario-titulo">Motores</h2>
         </div>
+        <div class="usuario-box">
+            <a href="/Historico/Index">
+                <img src="/Imagens/motor-gpt.png" class="usuario-img" />
+            </a>
+            <h2 class="usuario-titulo">Histórico</h2>
+        </div>
     </div>
 </div>
 <br>
 <div class="container-simples">
+    <h3>Dashboards</h3>
     <div class="container-linha">
         <div class="usuario-box">
             <a href="/Dashboard/Dashboard1">

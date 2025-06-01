@@ -15,58 +15,13 @@ using System.Threading.Tasks;
 public class DashboardController : Controller
 {
     public IActionResult Dashboard1(DateTime? dataInicio, DateTime? dataFim)
-    {
-        RegistroDAO dao = new RegistroDAO();
-
-        List<RegistroViewModel> model = dao.ListarRegistros();
-
-        if (dataInicio.HasValue)
-        {
-            model = model.Where(xs => xs.DataRegistro >= dataInicio).ToList();
-            ViewBag.DataInicio = FormataData(dataInicio);
-        }
-        if (dataFim.HasValue)
-        {
-            model = model.Where(xs => xs.DataRegistro <= dataFim).ToList();
-            ViewBag.DataFim = FormataData(dataFim);
-        }
-
-        return View(model);
+    {      
+        return View();
     }
 
     public IActionResult Dashboard2(DateTime? dataInicio, DateTime? dataFim)
-    {
-        RegistroDAO dao = new RegistroDAO();
-       
-        List<RegistroViewModel> model = dao.ListarRegistros();
-
-        if (dataInicio.HasValue)
-        {
-            model = model.Where(xs => xs.DataRegistro >= dataInicio).ToList();
-            ViewBag.DataInicio = FormataData(dataInicio);
-        }
-        if(dataFim.HasValue)
-        {
-            model = model.Where(xs => xs.DataRegistro <= dataFim).ToList();
-            ViewBag.DataFim = FormataData(dataFim);
-        }
-
-        return View(model);
-    }
-
-    public IActionResult ConsultaRegistros()
-    {
-        RegistroDAO dao = new RegistroDAO();
-        Random random = new Random();
-
-        try
-        {
-            return Json(dao.ListarRegistros());
-        }
-        catch (Exception ex)
-        {
-            return View("Error", new ErrorViewModel(ex.ToString()));
-        }
+    {             
+        return View();
     }
 
     public string FormataData(DateTime? data)

@@ -1,5 +1,4 @@
-﻿@model List<RegistroViewModel>
-@using Newtonsoft.Json
+﻿@using Newtonsoft.Json
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @{
@@ -87,7 +86,7 @@
         <input class="input historico" type="datetime-local" id="DataFim" value="@ViewBag.DataFim" name="Data" />
 
         <label style="padding:10px"> </label>
-        <button type="button" onclick="dashboard2.consultaHistorico()">Filtrar</button>
+        <button type="button" onclick="dashboard2.consultaHistorico()">Buscar</button>
     </div>
     <div class="row">
         <div class="col-md-8">
@@ -98,7 +97,7 @@
             <div class="card text-center">
                 <div class="card-header">Estatísticas</div>
                 <div class="card-body">
-                    <p class="val-min">Mínima: <span id="minTemp">--</span> C°</p>
+                    <p class="val-min">Mínima: <span id="minTemp">--</span></p>
                     <p class="val-max">Máxima: <span id="maxTemp">--</span></p>
                     <p class="val-mid">Média: <span id="mediaTemp">--</span></p>
                 </div>

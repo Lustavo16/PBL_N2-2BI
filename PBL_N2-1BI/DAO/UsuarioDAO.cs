@@ -134,8 +134,6 @@ namespace PBL_N2_1BI.DAO
         public List<UsuarioViewModel> ListarUsuarios(UsuarioViewModel usuarioConsulta)
         {
             List<UsuarioViewModel> listaUsuarios = new List<UsuarioViewModel>();
-            RegistroDAO teste = new RegistroDAO();
-            //teste.SalvaDados();
 
             string sql = "select * from dbo.Usuarios";
             DataTable tabela = HelperDAO.ExecutaSelect(sql, null);

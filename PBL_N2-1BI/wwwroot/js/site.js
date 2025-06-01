@@ -4,12 +4,8 @@ var media = 0;
 var graficoTempoReal = null;
 var graficoHistorico = null;
 var valoresTemp = [];
-var dadosDashBoard;
 var table;
 var ipRequisicao = "35.171.156.216";
-var valorTempAtual = 41;
-var contador = 0;
-var listaTemps = [];
 var listaPermissoes = [];
 
 var dashboard2 = function () {
@@ -17,19 +13,12 @@ var dashboard2 = function () {
     const carregarDados = function () {
 
         graficoTemperatura();
-        document.querySelector('.val-min').innerHTML = `Mínima: <span id="minTemp">${min}</span> ºC`;
-        document.querySelector('.val-max').innerHTML = `Máxima: <span id="maxTemp">${max}</span> ºC`;
-        document.querySelector('.val-mid').innerHTML = `Média: <span id="mediaTemp">${media}</span> ºC`;
-    }
-
-    const filtrar = function () {
-        console.log("teste");
-        var dataIncio = $("#DataInicio").val();
-        var dataFim = $("#DataFim").val();
-
-        var url = `/Dashboard/Dashboard2?dataInicio=${dataIncio}&dataFim=${dataFim}`
-
-        window.location.href = url;
+        if (min > 0)
+            document.querySelector('.val-min').innerHTML = `Mínima: <span id="minTemp">${min}</span> ºC`;
+        if (max > 0)
+            document.querySelector('.val-max').innerHTML = `Máxima: <span id="maxTemp">${max}</span> ºC`;
+        if (media > 0)
+            document.querySelector('.val-mid').innerHTML = `Média: <span id="mediaTemp">${media}</span> ºC`;
     }
 
     const resetarZoom = function () {
@@ -110,15 +99,19 @@ var dashboard2 = function () {
                 }
             });
 
-            min = Math.min(...valores);
-            max = Math.max(...valores);
-            media = (valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(2);
+            if (valores.length > 0) {
+                min = Math.min(...valores);
+                max = Math.max(...valores);
+                media = (valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(2);
+            }
         }
 
-
-        document.getElementById("minTemp").innerText = min;
-        document.getElementById("maxTemp").innerText = max;
-        document.getElementById("mediaTemp").innerText = media;
+        if (min > 0)
+            document.getElementById("minTemp").innerText = min;
+        if (max > 0)
+            document.getElementById("maxTemp").innerText = max;
+        if (media > 0)
+            document.getElementById("mediaTemp").innerText = media;
     }
 
     const consultaTemperatura = async function () {
@@ -189,7 +182,6 @@ var dashboard2 = function () {
     }
 
     return {
-        filtrar: filtrar,
         carregarDados: carregarDados,
         consultaTemperatura: consultaTemperatura,
         graficoTemperatura: graficoTemperatura,
@@ -586,5 +578,73 @@ var perfilSection = function () {
     return {
         onchangePermissoes: onchangePermissoes,
         preenchePermissoes: preenchePermissoes,
+    }
+}();
+
+var historicoSection = function () {
+
+    const confirmarBusca = function () {
+
+        Swal.fire({
+            title: 'Aviso!',
+            text: "Selecionar longos períodos pode causar lentidão, deseja prosseguir com a busca?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sim, prosseguir!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                consultaHistorico();
+            }
+        });
+    }
+
+    const consultaHistorico = function () {
+        $.ajax({
+            url: "/Historico/ObterDadosAgregadosMedia",
+            data: {
+                "ip": ipRequisicao,
+                "tipoSensor": "Temp",
+                "idSensor": "urn:ngsi-ld:Temp:001",
+                "atributo": "temperature",
+                "dateFrom": $("#DataInicio").val(),
+                "dateTo": $("#DataFim").val(),
+                "intervalo" : $('#Intervalo').val()
+            },
+            method: "GET"
+        }).done(function (response) {
+
+            if (response) {
+                valoresTemp = response;
+                montarTabelaRegistros(response)
+            }
+        })
+    }
+
+    const montarTabelaRegistros = function (registros) {
+
+        if (table && registros) {
+            table.clear();
+
+            registros.map(function (item) {
+                var data = new Date(item[0]).toLocaleString("pt-BR")
+                var valor = item[1];
+
+                table.row.add([
+                    data,
+                    valor.toFixed(2),
+                ]);
+            })
+
+            table.draw();
+        }
+    }
+
+    return {
+        consultaHistorico: consultaHistorico,
+        montarTabelaRegistros: montarTabelaRegistros,
+        confirmarBusca: confirmarBusca
     }
 }();
