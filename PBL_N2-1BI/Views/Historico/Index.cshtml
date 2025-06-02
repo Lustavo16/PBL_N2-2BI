@@ -63,21 +63,19 @@
                 { title: "Temperatura (Cº)" },
             ],
             createdRow: function (row, data, dataIndex) {
-                const temperatura = parseFloat(data[1]); // Pega o valor da temperatura
+                const temperatura = parseFloat(data[1]);
 
-                // Defina seu intervalo desejado:
-                const min = 20;
-                const max = 30;
+                let min = $('#ValMax').val();
+                let max = $('#ValMin').val();
 
-                // Acha a célula da temperatura (segunda coluna, índice 1)
                 const celula = $('td', row).eq(1);
 
                 if (temperatura > max) {
-                    celula.css('color', 'red'); // Acima = vermelho
+                    celula.css('color', 'red');
                 } else if (temperatura < min) {
-                    celula.css('color', 'orange'); // Abaixo = laranja ou amarelo
+                    celula.css('color', 'orange');
                 } else {
-                    celula.css('color', 'green'); // Dentro do intervalo = verde
+                    celula.css('color', 'green');
                 }
             }
         });
@@ -97,6 +95,14 @@
 
         <label style="padding:6px"> </label>
         <button type="button" class="button-busca" onclick="historicoSection.confirmarBusca()">Buscar</button>
+    </div>
+    <div style="text-align:left">
+        <label style="padding:6px" for="ValMax">Valor máximo máximo:</label>
+        <input class="input historico" type="text" placeholder="Valor máximo aceitável" id="ValMax" name="ValMax" maxlength="4" />
+
+        <label style="padding:6px" for="ValMin">Valor mínimo aceitável:</label>
+        <input class="input historico" type="text" placeholder="Valor mínimo aceitável" id="ValMin" name="ValMin" maxlength="4" />
+
     </div>
     <hr />
     <h5>Histórico de Leituras</h5>
