@@ -7,68 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Lista de Motores</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 20px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: black;
-            color: white
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Consultar Motores</h2>
+    <div class="motor-list-container">
+        <h2 class="motor-list-title">Consultar Motores</h2>
         @if (TempData["Mensagem"] != null)
         {
             <div id="mensagem" class="alert alert-success">@TempData["Mensagem"]</div>
@@ -81,47 +23,45 @@
             </div>
         }
         <script>
-            function limpaCampos (){
+            function limpaCampos() {
                 $('#Modelo').val('');
                 $('#Fabricante').val('');
                 $('#NumeroDeSerie').val('');
             }
         </script>
-        <div style="padding-top:20px; padding-bottom:20px">
+        <div class="motor-filter-form">
             <form action="/Motor/Consulta" method="post">
-                <input id="Modelo" type="text" name="Modelo" placeholder="Filtrar por Modelo" value="@ViewBag.Filtros.Modelo">
-                <input id="Fabricante" type="text" name="Fabricante" placeholder="Filtrar por Fabricante" value="@ViewBag.Filtros.Fabricante">
-                <input id="NumeroDeSerie" type="text" name="NumeroDeSerie" placeholder="Filtrar por Numero De Série" value="@ViewBag.Filtros.NumeroDeSerie">
+                <input id="Modelo" type="text" class="motor-filter-input" name="Modelo" placeholder="Filtrar por Modelo" value="@ViewBag.Filtros.Modelo">
+                <input id="Fabricante" type="text" class="motor-filter-input" name="Fabricante" placeholder="Filtrar por Fabricante" value="@ViewBag.Filtros.Fabricante">
+                <input id="NumeroDeSerie" type="text" class="motor-filter-input" name="NumeroDeSerie" placeholder="Filtrar por Número de Série" value="@ViewBag.Filtros.NumeroDeSerie">
 
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <input type="submit" value="Pesquisar" style="width: 120px;background-color: black; color: white;">
-                        <button onclick="limpaCampos()" style="width: 120px;">
+                <div class="action-buttons">
+                    <div class="left-actions">
+                        <input type="submit" class="btn-primary" value="Pesquisar">
+                        <button type="button" class="motor-action-button" onclick="limpaCampos()">
                             Limpar
                         </button>
                     </div>
-
-                    <div style="display: flex; gap: 10px;">
-                        <button type="button" onclick="window.location.href='/Motor/Adicionar'" style="width:120px; background-color:black; color:white">
+                    <div class="right-actions">
+                        <button type="button" class="btn-primary" onclick="window.location.href='/Motor/Adicionar'">
                             Adicionar
                         </button>
-                        <button type="button" onclick="window.location.href='/Home/Index'" style="width:120px;">
+                        <button type="button" class="motor-action-button" onclick="window.location.href='/Home/Index'">
                             Voltar
                         </button>
                     </div>
                 </div>
             </form>
         </div>
-        <div style="padding-top:20px; padding-bottom:20px">
-        </div>
-        <table>
+        <div class="table-spacer"></div>
+        <table class="motor-table">
             <thead>
                 <tr>
                     <th>Modelo</th>
                     <th>Fabricante</th>
                     <th>Temperatura de Secagem</th>
-                    <th>Numero de Série</th>
-                    <th style="width:6%">Ações</th>
+                    <th>Número de Série</th>
+                    <th class="motor-action-cell">Ações</th>
                 </tr>
             </thead>
             <tbody id="tabelaUsuarios">
@@ -132,13 +72,13 @@
                         <td>@motor.Fabricante</td>
                         <td>@(motor.TemperaturaSecagem + " ºC")</td>
                         <td>@motor.NumeroDeSerie</td>
-                        <td>
-                            <a href="Editar?idMotor=@motor.Id" style="padding:5px">
-                                <img src="/Imagens/edit.png" class="usuario-img" style="width:80%;padding:5px;" />
+                        <td class="motor-action-cell">
+                            <a href="Editar?idMotor=@motor.Id">
+                                <img src="/Imagens/edit.png" class="motor-action-icon" />
                             </a>
                             <br>
-                            <a onclick="confirmarExclusao(@motor.Id)" style="padding:5px;padding-top:10px">
-                                <img src="/Imagens/delete.png" class="usuario-img" style="width:85%;padding:5px;" />
+                            <a onclick="confirmarExclusao(@motor.Id)">
+                                <img src="/Imagens/delete.png" class="motor-action-icon" />
                             </a>
                         </td>
                     </tr>
@@ -165,26 +105,19 @@
 
             document.addEventListener('DOMContentLoaded', function () {
                 let mensagem = document.getElementById('mensagem')
-
-                if(mensagem)
-                {
+                if (mensagem) {
                     setTimeout(() => {
-                        mensagem.style.display = 'none';;
+                        mensagem.style.display = 'none';
+                    }, 3000);
+                }
+
+                let msgErro = document.getElementById('msgErro')
+                if (msgErro) {
+                    setTimeout(() => {
+                        msgErro.style.display = 'none';
                     }, 3000);
                 }
             });
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                    let mensagem = document.getElementById('msgErro')
-
-                    if(mensagem)
-                    {
-                        setTimeout(() => {
-                            mensagem.style.display = 'none';;
-                        }, 3000);
-                    }
-                });
         </script>
     </div>
 </body>

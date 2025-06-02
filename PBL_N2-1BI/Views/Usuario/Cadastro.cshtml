@@ -4,146 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Usuários</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        button {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        input {
-            width: 75%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        select {
-            width: 50%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        label {
-            width: 25%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 5px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: black;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <!-- Add Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body style="text-align:center">
-    <form action="/Usuario/Salvar" method="post" enctype="multipart/form-data" style="wtext-align:center">
-        <div class="container" style="width:80%; text-align:center">
-            <h2>Cadastrar Usuário</h2>
-            <br>
-            @if (!string.IsNullOrEmpty(Model.FotoBase64))
-            {
-                <br />
-                <img src="data:image/png;base64,@Model.FotoBase64"
-                     alt="Logo do Time"
-                     id="preview"
-                     style="max-width: 300px;  min-width:300px; height: auto; border: 2px solid darkgray; border-radius: 5px;"
-                     onclick="" />
-                <br />
-                <br />
-                <br />
-                <input style="width: auto; border: none" type="file" name="Foto" id="FotoUsuario" class="form-control" accept="image/*" onchange="previewImagem(event)" />
-            }
-            else
-            {
-                <br />
-                <img src="~/Imagens/vecteezy_user-icon-on-transparent-background_19879186.png"
-                     alt="Foto Usuario"
-                     id="preview"
-                     style="max-width: 300px; min-width:300px; height: auto; border: 2px solid darkgray; border-radius: 5px;" />
-                <br />
-                <br />
-                <label for="ImagemLogo">Selecione a foto:</label>
-                <input style="width: auto; border:none;" type="file" value="@Model.Foto" name="Foto" id="FotoUsuario" class="form-control" accept="image/*" onchange="previewImagem(event)" />
-                <br />
-            }
-            <div style="text-align:left">
+<body class="form-center">
+    <form action="/Usuario/Salvar" method="post" enctype="multipart/form-data" class="form-center">
+        <div class="user-form-container">
+            <h2 class="user-form-title">Cadastrar Usuário</h2>
+
+            <!-- Photo Upload Section -->
+            <div class="photo-upload-section">
+                @if (!string.IsNullOrEmpty(Model.FotoBase64))
+                {
+                    <div class="photo-preview">
+                        <img src="data:image/png;base64,@Model.FotoBase64"
+                             alt="Foto do Usuário"
+                             id="preview"
+                             class="photo-preview-img" />
+                        <input type="file" name="Foto" id="FotoUsuario" class="photo-upload-input" accept="image/*" onchange="previewImagem(event)" />
+                    </div>
+                }
+                else
+                {
+                    <div class="photo-upload-default">
+                        <img src="~/Imagens/user-circle-solid.svg"
+                             alt="Foto Usuario"
+                             id="preview"
+                             class="photo-preview-img default-user-img" />
+                        <br />
+                        <div class="photo-upload-control">
+                            <label for="FotoUsuario" class="photo-upload-label">Selecione a foto:</label>
+                            <input type="file" name="Foto" id="FotoUsuario" class="photo-upload-input" accept="image/*" onchange="previewImagem(event)" />
+                        </div>
+                    </div>
+                }
                 <input type="hidden" name="FotoBase64" id="FotoBase64" value="@Model.FotoBase64" />
+            </div>
+
+            <!-- Form Fields -->
+            <div class="form-fields">
                 <input id="idUsuario" type="text" name="Id" value="@Model.Id" hidden>
-                <span asp-validation-for="Login" class="text-danger"></span><br>
-                <h5>Login:</h5>
-                <input type="text" style="width:80%" asp-for="Login" placeholder="Login" value="@Model.Login" maxlength="50">
-                <br>
-                <span asp-validation-for="Nome" class="text-danger"></span><br>
-                <h5>Nome:</h5>
-                <input type="text" style="width:80%" asp-for="Nome" placeholder="Nome" value="@Model.Nome" maxlength="100">
-                <br>
-                <span asp-validation-for="Email" class="text-danger"></span><br>
-                <h5>E-mail:</h5>
-                <input type="text" style="width:80%" asp-for="Email" placeholder="E-mail" value="@Model.Email" maxlength="100">
-                <br>
-                <br>
-                <h5>Perfil:</h5>
-                <select name="IdPerfil">
-                    <option value="">Selecione um perfil</option>
-                    @foreach (var perfil in ViewBag.Perfis as List<PerfilViewModel>)
-                    {
-                        var selected = perfil.Id == Model.IdPerfil ? "selected='selected'" : "";
-                        @Html.Raw($"<option value='{perfil.Id}' {selected}>{perfil.Nome}</option>")
-                    }
-                </select>
+
+                <div class="form-group">
+                    <label class="form-label">Login:</label>
+                    <span asp-validation-for="Login" class="text-danger"></span>
+                    <input type="text" class="form-input" asp-for="Login" placeholder="Digite o login" value="@Model.Login" maxlength="50">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nome:</label>
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                    <input type="text" class="form-input" asp-for="Nome" placeholder="Digite o nome completo" value="@Model.Nome" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">E-mail:</label>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                    <input type="text" class="form-input" asp-for="Email" placeholder="Digite o e-mail" value="@Model.Email" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Perfil:</label>
+                    <select class="form-select" name="IdPerfil">
+                        <option value="">Selecione um perfil</option>
+                        @foreach (var perfil in ViewBag.Perfis as List<PerfilViewModel>)
+                        {
+                            var selected = perfil.Id == Model.IdPerfil ? "selected='selected'" : "";
+                            @Html.Raw($"<option value='{perfil.Id}' {selected}>{perfil.Nome}</option>")
+                        }
+                    </select>
+                </div>
+
                 <input type="hidden" name="IsPrimeiroAcesso" value="true" />
             </div>
-            <br>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <input type="submit" class="btn-save-photo" value="Salvar">
+                <button type="button" class="btn-cancel-photo" onclick="window.location.href='/Usuario/Consulta'">Cancelar</button>
+            </div>
         </div>
-        <br>
-        <div style="text-align:center">
-            <input type="submit" value="Salvar" style="width:15%;background-color:black; color:white">
-            <button type="button" style="width:15%" onclick="window.location.href='/Usuario/Consulta'">Cancelar</button>
-        </div>
+
         @section Scripts {
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
@@ -155,7 +96,9 @@
 
                     reader.onload = function () {
                         var img = document.getElementById('preview');
-                        img.src = reader.result;
+                        if (img) {
+                            img.src = reader.result;
+                        }
                     };
 
                     if (input.files && input.files[0]) {

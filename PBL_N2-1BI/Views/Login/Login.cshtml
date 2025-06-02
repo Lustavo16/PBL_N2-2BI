@@ -3,116 +3,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tela de Login</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        button {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        input {
-            width: 75%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        select {
-            width: 50%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        label {
-            width: 25%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 5px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: black;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-    </style>
-
+    <link rel="stylesheet" href="~/css/site.css">
 </head>
-<body style="text-align:center">
-    <form action="/Login/Entrar" method="post" style="wtext-align:center">
-        <div class="container" style="width:80%; text-align:center">
-            <h2>Bem-vindo(a)!</h2>
-            <div style="text-align:center">
+<body class="login-page">
+    <form action="/Login/Entrar" method="post" class="login-form">
+        <div class="login-container">
+            <h2 class="login-title">Bem-vindo(a)!</h2>
+            <div class="login-content">
                 @if (TempData["Mensagem"] != null)
                 {
-                    <div id="mensagem" class="alert alert-success">@TempData["Mensagem"]</div>
+                    <div id="mensagem" class="login-alert">@TempData["Mensagem"]</div>
                     TempData["Mensagem"] = null;
                 }
                 <br>
-                <span asp-validation-for="Login" class="text-danger"></span><br>
-                <h5>Usuário:</h5>
-                <input type="text" style="width:80%" id="login" name="Login" oninput="setTimeout(loginSection.verificaLogin(), 3000)" placeholder="Login" value="@Model.Login" maxlength="50" required>
+                <span asp-validation-for="Login" class="login-error"></span><br>
+                <h5 class="login-label">Usuário:</h5>
+                <input type="text" class="login-input" id="login" name="Login" oninput="setTimeout(loginSection.verificaLogin(), 3000)" placeholder="Login" value="@Model.Login" maxlength="50" required>
                 <br>
-                <span asp-validation-for="Senha" class="text-danger"></span><br>
-                <h5>Senha:</h5>
-                <input type="password" style="width:80%" name="Senha" placeholder="Senha" maxlength="12" required>
+                <span asp-validation-for="Senha" class="login-error"></span><br>
+                <h5 class="login-label">Senha:</h5>
+                <input type="password" class="login-input" name="Senha" placeholder="Senha" maxlength="12" required>
                 <br>
             </div>
         </div>
         <br>
-        <div style="text-align:center">
-            <span asp-validation-for="IsUsuarioValido" class="text-danger"></span><br>
-            <input type="submit" value="Entrar" style="width:15%;background-color:black; color:white">
-            <button type="button" id="botaoCadastrar" style="width:15%" onclick="window.location.href='/Login/Cadastrar'">Cadastrar</button>
+        <div class="login-actions">
+            <span asp-validation-for="IsUsuarioValido" class="login-error"></span><br>
+            <input type="submit" class="login-btn-primary" value="Entrar">
+            <button type="button" class="login-btn-secondary" id="botaoCadastrar" onclick="window.location.href='/Login/Cadastrar'">Cadastrar</button>
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 let mensagem = document.getElementById('mensagem')
                 if (mensagem) {
                     setTimeout(() => {
-                        mensagem.style.display = 'none';;
+                        mensagem.style.display = 'none';
                     }, 3000);
                 }
             });
@@ -122,4 +47,3 @@
 @section Scripts {
     <script src="@Url.Content("~/js/site.js")"></script>
 }
-

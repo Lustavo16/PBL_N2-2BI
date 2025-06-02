@@ -5,116 +5,65 @@
     ViewData["Title"] = "Temperatura - Histórico de aferições";
 }
 
-<style>
-    select {
-        width: 18%;
-        padding: 2px;
-        height: 30px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    input {
-    }
-
-        input.historico {
-            width: 18%;
-            padding: 8px;
-            margin-bottom: 10px;
-            height: 30px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-    button {
-        width: 10%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-    th, td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-    }
-
-    th {
-        background-color: black;
-        color: white
-    }
-
-    tr:nth-child(even) {
-        background-color: #fce6b5;
-    }
-
-    .placeholder {
-        width: 120%;
-    }
-
-</style>
-
 <script>
     $(document).ready(function () {
-
         dashboard2.carregarDados();
 
-         table = $('#tabelaRegistros').DataTable({
-                order: [[0, 'desc']],
-                columns: [
-                    { title: "Data/Hora" },
-                    { title: "Temperatura (Cº)" },
-                ]
-            });
+        table = $('#tabelaRegistros').DataTable({
+            order: [[0, 'desc']],
+            columns: [
+                { title: "Data/Hora" },
+                { title: "Temperatura (Cº)" },
+            ]
         });
+    });
 </script>
 
 <div class="container">
-    <div class="row" style="text-align:left">
-        <label style="padding:10px" for="DataInicio">Data Início:</label>
-        <input class="input historico" type="datetime-local" id="DataInicio" value="@ViewBag.DataInicio" name="Data" />
+    <div class="container-gap-dashboard2">
+        <div class="row filter-row">
+            <div class="filter-group">
+                <label class="filter-label" for="DataInicio">Data Início:</label>
+                <input class="dashboard-input historico-input" type="date" id="DataInicio" value="@ViewBag.DataInicio" name="DataInicio" style="width: auto;" />
+            </div>
 
-        <label style="padding:10px" for="DataFim">Data Fim:</label>
-        <input class="input historico" type="datetime-local" id="DataFim" value="@ViewBag.DataFim" name="Data" />
+            <div class="filter-group">
+                <label class="filter-label" for="DataFim">Data Fim:</label>
+                <input class="dashboard-input historico-input" type="date" id="DataFim" value="@ViewBag.DataFim" name="DataFim" style="width: auto;" />
+            </div>
 
-        <label style="padding:10px"> </label>
-        <button type="button" onclick="dashboard2.consultaHistorico()">Buscar</button>
-    </div>
-    <div class="row">
-        <div class="col-md-8">
-            <canvas id="graficoHistorico" height="140"></canvas>
-            <button style="width:20%" hideen onclick="dashboard2.resetarZoom()">Resetar Zoom</button>
+            <div class="filter-group">
+                <button class="historico-button" type="button" onclick="dashboard2.consultaHistorico()">Buscar</button>
+            </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-header">Estatísticas</div>
-                <div class="card-body">
-                    <p class="val-min">Mínima: <span id="minTemp">--</span></p>
-                    <p class="val-max">Máxima: <span id="maxTemp">--</span></p>
-                    <p class="val-mid">Média: <span id="mediaTemp">--</span></p>
+        <div class="row">
+            <div class="col-md-8 chart-container">
+                <canvas id="graficoHistorico" class="history-chart"></canvas>
+                <button class="reset-zoom-btn" onclick="dashboard2.resetarZoom()">Resetar Zoom</button>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center stats-card">
+                    <div class="card-header">Estatísticas</div>
+                    <div class="card-body">
+                        <p class="val-min">Mínima: <span id="minTemp">--</span></p>
+                        <p class="val-max">Máxima: <span id="maxTemp">--</span></p>
+                        <p class="val-mid">Média: <span id="mediaTemp">--</span></p>
+                    </div>
                 </div>
             </div>
         </div>
+        <hr class="divider" />
+        <h5 class="readings-title">Últimas Leituras</h5>
+        <table id="tabelaRegistros" class="display temperature-table">
+            <thead>
+                <tr>
+                    <th>Data/Hora</th>
+                    <th>Temperatura (Cº)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
-    <hr />
-    <h5>Últimas Leituras</h5>
-    <table id="tabelaRegistros" class="display">
-        <thead>
-            <tr>
-                <th>Data/Hora</th>
-                <th>Temperatura (Cº)</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
 </div>
 
 @section Scripts {
@@ -123,7 +72,6 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdn.datatables.net/plug-ins/1.10.25/sorting/datetime-moment.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
 }

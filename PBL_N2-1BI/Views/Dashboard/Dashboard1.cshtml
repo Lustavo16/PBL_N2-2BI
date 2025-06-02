@@ -5,52 +5,8 @@
     ViewData["Title"] = "Temperatura - Aferição em tempo de execução";
 }
 
-<style>
-    select {
-        width: 18%;
-        padding: 2px;
-        height: 30px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    button {
-        width: 10%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-    th, td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-    }
-
-    th {
-        background-color: black;
-        color: white
-    }
-
-    tr:nth-child(even) {
-        background-color: #fce6b5;
-    }
-
-</style>
-
-<h1 id="titulo" class="mb-4">@ViewData["Title"]</h1>
-
 <script>
-    $(document).ready(function() {
-
+    $(document).ready(function () {
         $.fn.dataTable.moment('DD/MM/YYYY HH:mm:ss');
 
         dashboard1.init();
@@ -73,35 +29,47 @@
 </script>
 
 <div class="container">
-    <div class="row mb-4">
-        <div style="height:250px; text-align: right">
-            <canvas id="gaugeChart"></canvas>
+    <div class="container-gap-dashboard2">
+        <div class="row filter-row">
+            <div class="historico-filter-group">
+                <label for="ValMax">Valor máximo aceitável:</label>
+                <input type="text" class="historico-input" placeholder="Valor máximo aceitável" id="ValMax" name="ValMax" maxlength="4">
+            </div>
+
+            <div class="historico-filter-group">
+                <label for="ValMin">Valor mínimo aceitável:</label>
+                <input type="text" class="historico-input" placeholder="Valor mínimo aceitável" id="ValMin" name="ValMin" maxlength="4">
+            </div>
         </div>
-        <div class="col-md-8">
-            <canvas id="graficoTempoReal" height="140"></canvas>
-            <button style="width:20%" hidden onclick="dashboard1.resetarZoom()">Resetar Zoom</button>
+        <br>
+        <div class="row mb-4 dashboard-row">
+            <div class="gauge-container">
+                <canvas id="gaugeChart"></canvas>
+            </div>
+            <div class="col-md-8 chart-container">
+                <canvas id="graficoTempoReal" class="realtime-chart"></canvas>
+                <button class="reset-zoom-btn" onclick="dashboard1.resetarZoom()">Resetar Zoom</button>
+            </div>
         </div>
+        <h5 class="readings-title">Últimas Leituras</h5>
+        <table id="tabelaRegistros" class="display temperature-table">
+            <thead>
+                <tr>
+                    <th>Data/Hora</th>
+                    <th id="tipoValor">Temperatura (Cº)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
-    <h5>Últimas Leituras</h5>
-    <table id="tabelaRegistros" class="display">
-        <thead>
-            <tr>
-                <th>Data/Hora</th>
-                <th id="tipoValor">Temperatura (Cº)</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
 </div>
 
 @section Scripts {
-
     <script src="@Url.Content("~/js/site.js")"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdn.datatables.net/plug-ins/1.10.25/sorting/datetime-moment.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
 }

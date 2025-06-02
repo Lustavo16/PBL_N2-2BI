@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using PBL_N2_1BI.DAO;
-using PBL_N2_1BI.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -15,12 +14,12 @@ using System.Threading.Tasks;
 public class DashboardController : Controller
 {
     public IActionResult Dashboard1(DateTime? dataInicio, DateTime? dataFim)
-    {      
+    {
         return View();
     }
 
     public IActionResult Dashboard2(DateTime? dataInicio, DateTime? dataFim)
-    {             
+    {
         return View();
     }
 
@@ -52,7 +51,7 @@ public class DashboardController : Controller
         var value = root
             .GetProperty("contextResponses")[0]
             .GetProperty("contextElement")
-            .GetProperty("attributes")[0] 
+            .GetProperty("attributes")[0]
             .GetProperty("values")
             .ToString();
 
@@ -66,15 +65,6 @@ public class DashboardController : Controller
         using var client = new HttpClient();
         client.DefaultRequestHeaders.Add("fiware-service", "smart");
         client.DefaultRequestHeaders.Add("fiware-servicepath", "/");
-
-        if (dateFrom.ToShortDateString() != "01/01/0001")
-        {
-            dateFrom = dateFrom.AddHours(-3);
-        }
-        if (dateTo.ToShortDateString() != "01/01/0001")
-        {
-            dateTo = dateTo.AddHours(-3);
-        }
 
         string dateFromStr = dateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
 
@@ -91,9 +81,9 @@ public class DashboardController : Controller
             var url = $"http://{ip}:8666/STH/v1/contextEntities/type/{tipoSensor}/id/{idSensor}/attributes/{atributo}" +
                       $"?hLimit=100&hOffset={offset}";
 
-            if(dateFrom.ToShortDateString() != "01/01/0001")
+            if (dateFrom.ToShortDateString() != "01/01/0001")
             {
-                url += $"&dateFrom={dateFromStr}";             
+                url += $"&dateFrom={dateFromStr}";
             }
             if (dateFrom.ToShortDateString() != "01/01/0001")
             {
@@ -159,6 +149,37 @@ public class DashboardController : Controller
 
         return Content(jsonFinal, "application/json");
     }
+
+    public async Task<bool> OnOffLed(string ip, bool onOff)
+    {
+        var client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Patch, "http://35.171.156.216:1026/v2/entities/urn:ngsi-ld:Temp:001/attrs");
+        StringContent content = new StringContent("");
+
+        request.Headers.Add("fiware-service", "smart");
+        request.Headers.Add("fiware-servicepath", "/");
+
+        if (onOff)
+            content = new StringContent("{\n  \"on\": {\n   \"type\" : \"command\",\n      \"value\" : \"\"\n  }\n}", null, "application/json");
+        else
+            content = new StringContent("{\n  \"off\": {\n   \"type\" : \"command\",\n      \"value\" : \"\"\n  }\n}", null, "application/json");
+
+        request.Content = content;
+
+        var response = await client.SendAsync(request);
+
+        response.EnsureSuccessStatusCode();
+
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 
     public static List<DateTime> ConvertToBrasiliaTime(List<string> timestamps)
     {

@@ -101,7 +101,7 @@ var dashboard2 = function () {
             });
 
             if (valores.length > 0) {
-                min = Math.min(...valores);
+                min = Math.min(...valores.filter(xs => xs > 0))
                 max = Math.max(...valores);
                 media = (
                     valores
@@ -212,7 +212,11 @@ var dashboard1 = function () {
 
     const init = async function () {
         await consultaUltimaTemperatura();
-    }; init
+    };
+
+    const ledOnOffAsync = async function (onOff) {
+        await onOffLed(onOff);
+    }
 
     const graficoGauge = function (tempAtual) {
         const ctx = document.getElementById('gaugeChart').getContext('2d');
@@ -397,6 +401,24 @@ var dashboard1 = function () {
         );
     }
 
+    const onOffLed = async function (onOff) {
+        await new Promise(resolve =>
+            $.ajax({
+                url: "/Dashboard/OnOffLed",
+                data: {
+                    "ip": ipRequisicao,
+                    "onOff": onOff
+                },
+                method: "GET"
+            })
+                .done(function (response) {
+
+                })
+                .always(resolve())
+        );
+
+    }
+
     const consultaUltimaTemperatura = async function () {
         await new Promise(resolve =>
             $.ajax({
@@ -413,6 +435,16 @@ var dashboard1 = function () {
                 if (response) {
                     valoresTemp.push(response[0]);
                     montarTabelaRegistros(valoresTemp)
+
+                    let max = $('#ValMax').val();
+                    let min = $('#ValMin').val();
+
+                    if (max && response[0].attrValue > max)
+                        ledOnOffAsync(true);
+                    else if (min && response[0].attrValue < min)
+                        ledOnOffAsync(true);
+                    else
+                        ledOnOffAsync(false);
 
                     carregarDados();
                 }
@@ -447,6 +479,8 @@ var dashboard1 = function () {
         consultaUltimaTemperatura: consultaUltimaTemperatura,
         init: init,
         resetarZoom: resetarZoom,
+        onOffLed: onOffLed,
+        ledOnOffAsync: ledOnOffAsync,
     }
 }();
 

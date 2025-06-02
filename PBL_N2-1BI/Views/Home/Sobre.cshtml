@@ -2,10 +2,11 @@
     ViewData["Title"] = "Sobre o Sistema";
 }
 
-<h1 class="mb-4">@ViewData["Title"]</h1>
+<h1 class="page-title">@ViewData["Title"]</h1>
 
-<div class="container">
-    <section class="mb-5">
+<div class="about-container">
+    <section class="about-section">
+        <br />
         <h3>Descrição do Projeto</h3>
         <p>
             Este projeto tem como foco o desenvolvimento de um sistema de monitoramento térmico baseado em <strong>Internet das Coisas (IoT)</strong> para estufas utilizadas no processo de secagem de motores elétricos. A proposta visa garantir maior controle de temperatura, promovendo eficiência operacional, redução de desperdício energético e maior uniformidade na secagem dos motores.
@@ -15,12 +16,13 @@
         </p>
     </section>
 
-    <section class="mb-5">
+    <section class="about-section">
+        <br />
         <h3>Classes de Isolamento Térmico</h3>
         <p>
             As classes de isolamento térmico são determinadas por normas técnicas (IEC 60085, NEMA, ABNT) e classificam os materiais com base na temperatura máxima contínua que suportam. Essas classes são fundamentais para garantir que os motores operem dentro dos limites seguros de temperatura:
         </p>
-        <table class="table table-bordered table-striped">
+        <table class="thermal-class-table">
             <thead>
                 <tr>
                     <th>Classe</th>
@@ -41,9 +43,10 @@
         </table>
     </section>
 
-    <section class="mb-4">
+    <section class="about-section">
+        <br />
         <h3>Objetivos</h3>
-        <ul>
+        <ul class="goals-list">
             <li>Coletar e exibir dados em tempo real;</li>
             <li>Armazenar informações para análise histórica;</li>
             <li>Fornecer dashboards e consultas avançadas;</li>
@@ -51,18 +54,20 @@
         </ul>
     </section>
 
-    <section class="mb-4">
+    <section class="about-section">
+        <br />
         <h3>Tecnologias Utilizadas</h3>
-        <ul>
+        <ul class="tech-list">
             <li>ASP.NET Core MVC;</li>
             <li>HTML5, CSS3, JavaScript, SQL e C#;</li>
             <li>ESP32 e MQTT.</li>
         </ul>
     </section>
 
-    <section class="mb-4">
+    <section class="about-section">
+        <br />
         <h3>Integrantes do Grupo</h3>
-        <table class="table table-bordered">
+        <table class="members-table">
             <thead>
                 <tr>
                     <th>Nome</th>
@@ -94,7 +99,8 @@
         </table>
     </section>
 
-    <section>
+    <section class="advisors-section">
+        <br />
         <h3>Orientadores</h3>
         <p>
             Prof. Eduardo Rosalem Marcelino – Linguagem de Programação I
@@ -113,4 +119,3 @@
         </p>
     </section>
 </div>
-

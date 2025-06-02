@@ -3,35 +3,18 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 <!DOCTYPE html>
-<style>
-    .swal-wide {
-        padding: 20px;
-    }
-
-    .btn-maior {
-        width: 300px;
-        padding: 5px 20px !important;
-    }
-
-    button {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-</style>
-
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>@ViewData["Title"] - PBL_N2_1BI</title>
+    <title>@ViewData["Title"] - Monitoramento de Estufa de Secagem</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/layout-overrides.css" />
 </head>
-<body style="background-color:#fdf5e8;">
+<body class="layout-body">
     <header>
         @{
             LoginViewModel usuarioLogin = new LoginViewModel();
@@ -40,43 +23,67 @@
             if (login != null)
                 usuarioLogin = JsonConvert.DeserializeObject<LoginViewModel>(login);
         }
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" style="background-color:#ffaf10; color:white">
-            <div class="container" style="background-color:#ffaf10; height:80px">
-                <a class="navbar-brand" style="color:white; font-size:25px">Projeto Estufa de Secagem</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+        <nav class="main-navbar">
+            <div class="navbar-container">
+                <a class="navbar-brand">
+                    <i class="fas fa-thermometer-half"></i> Monitoramento de Estufa de Secagem
+                </a>
+
+                <button class="navbar-toggle" type="button">
+                    <span class="toggle-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
-                        @if (usuarioLogin.Login != null)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" style="color:white; font-size:18px" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" style="color:white; font-size:18px" asp-area="" asp-controller="Home" asp-action="Sobre">Sobre</a>
-                            </li>
-                        }
-                    </ul>
-                </div>               
-                @if (usuarioLogin.Login != null)
-                {
-                    @if (usuarioLogin.FotoBase64 != null)
+
+                <div class="es-nav-container">
+                    @if (usuarioLogin?.FotoBase64 != null)
                     {
-                        <img src="data:image/png;base64,@usuarioLogin.FotoBase64" title="@usuarioLogin.Login" alt="foto" style="height:60px; width:auto; border-radius: 5px;" />
+                        <div class="user-photo-container">
+                            <img src="data:image/png;base64,@usuarioLogin.FotoBase64"
+                                 alt="Foto do usuário"
+                                 class="user-photo"
+                                 title="@usuarioLogin.Login">
+                        </div>
                     }
-                    <br>
-                    <img src="/Imagens/exit.png" alt="foto" style="max-height:40px; padding-right: 5px; padding-top: 5px; padding-left: 15px; float: left; cursor: pointer;" onclick="confirmarSair()" />
-                }
+
+                    <div class="es-nav-menu">
+                        <ul class="es-nav-list">
+                            @if (usuarioLogin?.Login != null)
+                            {
+                                <li class="es-nav-item">
+                                    <a class="es-nav-link es-nav-btn-home" asp-area="" asp-controller="Home" asp-action="Index">
+                                        <i class="fas fa-home es-nav-icon"></i>
+                                        <span class="es-nav-text">Home</span>
+                                    </a>
+                                </li>
+                                <li class="es-nav-item">
+                                    <a class="es-nav-link es-nav-btn-about" asp-area="" asp-controller="Home" asp-action="Sobre">
+                                        <i class="fas fa-info-circle es-nav-icon"></i>
+                                        <span class="es-nav-text">Sobre</span>
+                                    </a>
+                                </li>
+                                <li class="es-nav-item">
+                                    <button class="es-nav-link botao-sair" onclick="confirmarSair()">
+                                        <i class="fas fa-sign-out-alt es-nav-icon"></i>
+                                        <span class="es-nav-text">Sair</span>
+                                    </button>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <div class="main-container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+
+    <footer class="footer">
+            <p class="footer-text">&copy; @DateTime.Now.Year - Monitoramento de Estufa de Secagem</p>
+       
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

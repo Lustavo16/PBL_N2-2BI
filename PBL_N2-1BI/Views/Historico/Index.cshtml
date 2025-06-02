@@ -1,112 +1,47 @@
 ﻿@using Newtonsoft.Json
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @{
     ViewData["Title"] = "Temperatura - Histórico de aferições";
 }
 
-<style>
-    input {
-    }
-
-        input.historico {
-            width: 17%;
-            padding: 8px;
-            margin-bottom: 10px;
-            height: 30px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-    .button-busca {
-        width: 10%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-    th, td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-    }
-
-    th {
-        background-color: black;
-        color: white
-    }
-
-    tr:nth-child(even) {
-        background-color: #fce6b5;
-    }
-
-    .placeholder {
-        width: 120%;
-    }
-
-</style>
-
-<script>
-        $(document).ready(function () {
-
-        table = $('#tabelaRegistros').DataTable({
-            order: [[0, 'desc']],
-            columns: [
-                { title: "Data/Hora" },
-                { title: "Temperatura (Cº)" },
-            ],
-            createdRow: function (row, data, dataIndex) {
-                const temperatura = parseFloat(data[1]);
-
-                let min = $('#ValMax').val();
-                let max = $('#ValMin').val();
-
-                const celula = $('td', row).eq(1);
-
-                if (temperatura > max) {
-                    celula.css('color', 'red');
-                } else if (temperatura < min) {
-                    celula.css('color', 'orange');
-                } else {
-                    celula.css('color', 'green');
-                }
-            }
-        });
-    });
-</script>
-
 <div class="container">
-    <div style="text-align:left">
-        <label style="padding:6px" for="DataInicio">Intervalo entre os valores:</label>
-        <input class="input historico" type="text" placeholder="Intervalo em segundos" id="Intervalo" value="@ViewBag.DataInicio" name="Intervalo" maxlength="4" />
+    <div class="historico-filters">
+        <div class="historico-filter-group">
+            <label for="Intervalo">Intervalo entre os valores:</label>
+            <input type="text" class="historico-input" placeholder="Intervalo em segundos" id="Intervalo" value="@ViewBag.DataInicio" name="Intervalo" maxlength="4">
+        </div>
 
-        <label style="padding:6px" for="DataInicio">Data Início:</label>
-        <input class="input historico" type="datetime-local" id="DataInicio" value="@ViewBag.DataInicio" name="DataInicio" />
+        <div class="historico-filter-group">
+            <label for="DataInicio">Data Início:</label>
+            <input type="date" class="historico-input" id="DataInicio" value="@ViewBag.DataInicio" name="DataInicio">
+        </div>
 
-        <label style="padding:6px" for="DataFim">Data Fim:</label>
-        <input class="input historico" type="datetime-local" id="DataFim" value="@ViewBag.DataFim" name="DataFim" />
+        <div class="historico-filter-group">
+            <label for="DataFim">Data Fim:</label>
+            <input type="date" class="historico-input" id="DataFim" value="@ViewBag.DataFim" name="DataFim">
+        </div>
 
-        <label style="padding:6px"> </label>
-        <button type="button" class="button-busca" onclick="historicoSection.confirmarBusca()">Buscar</button>
+        <div class="historico-filter-group">
+            <button type="button" class="historico-button" onclick="historicoSection.confirmarBusca()">Buscar</button>
+        </div>
     </div>
-    <div style="text-align:left">
-        <label style="padding:6px" for="ValMax">Valor máximo máximo:</label>
-        <input class="input historico" type="text" placeholder="Valor máximo aceitável" id="ValMax" name="ValMax" maxlength="4" />
 
-        <label style="padding:6px" for="ValMin">Valor mínimo aceitável:</label>
-        <input class="input historico" type="text" placeholder="Valor mínimo aceitável" id="ValMin" name="ValMin" maxlength="4" />
+    <div class="historico-filters">
+        <div class="historico-filter-group">
+            <label for="ValMax">Valor máximo aceitável:</label>
+            <input type="text" class="historico-input" placeholder="Valor máximo aceitável" id="ValMax" name="ValMax" maxlength="4">
+        </div>
 
+        <div class="historico-filter-group">
+            <label for="ValMin">Valor mínimo aceitável:</label>
+            <input type="text" class="historico-input" placeholder="Valor mínimo aceitável" id="ValMin" name="ValMin" maxlength="4">
+        </div>
     </div>
-    <hr />
+
+    <hr class="historico-divider">
+
     <h5>Histórico de Leituras</h5>
-    <table id="tabelaRegistros" class="display">
+    <table id="tabelaRegistros" class="historico-table">
         <thead>
             <tr>
                 <th>Data/Hora</th>
@@ -118,9 +53,36 @@
 </div>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="@Url.Content("~/js/site.js")"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdn.datatables.net/plug-ins/1.10.25/sorting/datetime-moment.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            table = $('#tabelaRegistros').DataTable({
+                order: [[0, 'desc']],
+                columns: [
+                    { title: "Data/Hora" },
+                    { title: "Temperatura (Cº)" },
+                ],
+                createdRow: function (row, data, dataIndex) {
+                    const temperatura = parseFloat(data[1]);
+                    let max = $('#ValMax').val();
+                    let min = $('#ValMin').val();
+                    const celula = $('td', row).eq(1);
+
+                    if (temperatura > max) {
+                        celula.css('color', 'red');
+                    } else if (temperatura < min) {
+                        celula.css('color', 'orange');
+                    } else {
+                        celula.css('color', 'green');
+                    }
+                }
+            });
+        });
+    </script>
 }

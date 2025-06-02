@@ -6,78 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>Lista de Currículos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 20px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        select {
-            width: 100%;
-            padding: 15px;
-            height: 49px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: black;
-            color: white
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <title>Lista de Simulações</title>
 </head>
 <body>
-    <div class="container">
-        <h2>Consultar Simulações</h2>
+    <div class="simulation-list-container">
+        <h2 class="simulation-list-title">Consultar Simulações</h2>
         @if (TempData["Mensagem"] != null)
         {
             <div id="mensagem" class="alert alert-success">@TempData["Mensagem"]</div>
@@ -90,18 +23,18 @@
             </div>
         }
         <script>
-            function limpaCampos (){
+            function limpaCampos() {
                 $('#Nome').val('');
                 $('#Login').val('');
                 $('select[name="IdMotor"]').val('');
                 $('select[name="IdUsuario"]').val('');
             }
         </script>
-        <div style="padding-top:20px; padding-bottom:20px">
+        <div class="filter-section">
             <form action="/Simulacao/Consulta" method="post">
-                <input id="Nome" type="text" name="Nome" placeholder="Filtrar por Nome" value="@ViewBag.Filtros.Nome">
+                <input id="Nome" type="text" class="filter-input" name="Nome" placeholder="Filtrar por Nome" value="@ViewBag.Filtros.Nome">
 
-                <select name="IdMotor">
+                <select class="filter-select" name="IdMotor">
                     @{
                         var idSelecionado = ViewBag.Filtros?.IdMotor as int?;
                         var selectedDefault = !idSelecionado.HasValue ? "selected='selected'" : "";
@@ -114,7 +47,7 @@
                     }
                 </select>
 
-                <select name="IdUsuario">
+                <select class="filter-select" name="IdUsuario">
                     @{
                         var idUsuarioSelecionado = ViewBag.Filtros?.IdUsuario as int?;
                         var selectedDefaultUsuario = !idUsuarioSelecionado.HasValue ? "selected='selected'" : "";
@@ -127,35 +60,27 @@
                     }
                 </select>
 
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <input type="submit" value="Pesquisar" style="width: 120px;background-color: black; color: white;">
-                        <button onclick="limpaCampos()" style="width: 120px;">
-                            Limpar
-                        </button>
+                <div class="action-buttons">
+                    <div class="left-actions">
+                        <input type="submit" class="btn-primary" value="Pesquisar">
+                        <button type="button" class="btn-secondary" onclick="limpaCampos()">Limpar</button>
                     </div>
-
-                    <div style="display: flex; gap: 10px;">
-                        <button type="button" onclick="window.location.href='/Simulacao/Adicionar'" style="width: 120px;background-color:black; color:white">
-                            Adicionar
-                        </button>
-                        <button type="button" onclick="window.location.href='/Home/Index'" style="width: 120px">
-                            Voltar
-                        </button>
+                    <div class="right-actions">
+                        <button type="button" class="btn-primary" onclick="window.location.href='/Simulacao/Adicionar'">Adicionar</button>
+                        <button type="button" class="btn-secondary" onclick="window.location.href='/Home/Index'">Voltar</button>
                     </div>
                 </div>
             </form>
         </div>
-        <div style="padding-top:20px; padding-bottom:20px">
-        </div>
-        <table>
+        <div class="table-spacer"></div>
+        <table class="simulation-table">
             <thead>
                 <tr>
                     <th>Nome</th>
                     <th>Motor</th>
                     <th>Usuário</th>
                     <th>Data de Criação/Alteração</th>
-                    <th style="width:6%">Ações</th>
+                    <th class="action-column">Ações</th>
                 </tr>
             </thead>
             <tbody id="tabelaUsuarios">
@@ -166,13 +91,13 @@
                         <td>@simulacao.Motor.Modelo</td>
                         <td>@simulacao.Usuario.Login</td>
                         <td>@simulacao.DataCriacaoAlteracao</td>
-                        <td>
-                            <a href="Editar?idSimulacao=@simulacao.Id" style="padding:5px">
-                                <img src="/Imagens/edit.png" class="usuario-img" style="width:80%;padding:5px;" />
+                        <td class="action-column">
+                            <a href="Editar?idSimulacao=@simulacao.Id" class="action-link">
+                                <img src="/Imagens/edit.png" class="action-icon" />
                             </a>
                             <br>
-                            <a onclick="confirmarExclusao(@simulacao.Id)" style="padding:5px;padding-top:10px">
-                                <img src="/Imagens/delete.png" class="usuario-img" style="width:85%;padding:5px;" />
+                            <a onclick="confirmarExclusao(@simulacao.Id)" class="action-link">
+                                <img src="/Imagens/delete.png" class="action-icon" />
                             </a>
                         </td>
                     </tr>
@@ -180,7 +105,7 @@
             </tbody>
         </table>
         <script>
-             function confirmarExclusao(id) {
+            function confirmarExclusao(id) {
                 Swal.fire({
                     title: 'Tem certeza?',
                     text: "Você realmente deseja excluir esta Simulação?",
@@ -196,28 +121,23 @@
                     }
                 });
             }
-           document.addEventListener('DOMContentLoaded', function () {
-                let mensagem = document.getElementById('mensagem')
 
-                if(mensagem)
-                {
+            document.addEventListener('DOMContentLoaded', function () {
+                let mensagem = document.getElementById('mensagem');
+                let msgErro = document.getElementById('msgErro');
+
+                if (mensagem) {
                     setTimeout(() => {
-                        mensagem.style.display = 'none';;
+                        mensagem.style.display = 'none';
+                    }, 3000);
+                }
+
+                if (msgErro) {
+                    setTimeout(() => {
+                        msgErro.style.display = 'none';
                     }, 3000);
                 }
             });
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                    let mensagem = document.getElementById('msgErro')
-
-                    if(mensagem)
-                    {
-                        setTimeout(() => {
-                            mensagem.style.display = 'none';;
-                        }, 3000);
-                    }
-                });
         </script>
     </div>
 </body>
