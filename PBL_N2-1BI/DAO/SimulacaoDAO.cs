@@ -14,12 +14,19 @@ namespace PBL_N2_1BI.DAO
 
         public static SqlParameter[] CriaParametros(SimulacaoViewModel Simulacao)
         {
-            SqlParameter[] parametros = new SqlParameter[5];
+            SqlParameter[] parametros = new SqlParameter[10];
             parametros[0] = new SqlParameter("Id", Simulacao.Id);
             parametros[1] = new SqlParameter("IdUsuario", Simulacao.IdUsuario);
             parametros[2] = new SqlParameter("IdMotor", Simulacao.IdMotor);
             parametros[3] = new SqlParameter("Nome", Simulacao.Nome);
             parametros[4] = new SqlParameter("DataCriacaoAlteracao", Simulacao.DataCriacaoAlteracao);
+
+            parametros[5] = new SqlParameter("Media", (object?)Simulacao.Media ?? DBNull.Value);
+            parametros[6] = new SqlParameter("Min", (object?)Simulacao.Min ?? DBNull.Value);
+            parametros[7] = new SqlParameter("Max", (object?)Simulacao.Max ?? DBNull.Value);
+
+            parametros[8] = new SqlParameter("DataInicio", (object?)Simulacao.DataInicio ?? DBNull.Value);
+            parametros[9] = new SqlParameter("DataFim", (object?)Simulacao.DataFim ?? DBNull.Value);
 
             return parametros;
         }
@@ -30,8 +37,8 @@ namespace PBL_N2_1BI.DAO
             Simulacao.DataCriacaoAlteracao = DateTime.Now;
 
             string sql =
-                "INSERT INTO Simulacao (Id, IdUsuario, IdMotor, Nome, DataCriacaoAlteracao) " +
-                $"VALUES (@Id, @IdUsuario, @IdMotor, @Nome, @DataCriacaoAlteracao)";
+                "INSERT INTO Simulacao (Id, IdUsuario, IdMotor, Nome, DataCriacaoAlteracao, Media, Min, Max, DataInicio, DataFim) " +
+                $"VALUES (@Id, @IdUsuario, @IdMotor, @Nome, @DataCriacaoAlteracao, @Media, @Min, @Max, @DataInicio, @DataFim)";
 
             HelperDAO.ExecutaSQL(sql, CriaParametros(Simulacao));
         }
@@ -40,7 +47,7 @@ namespace PBL_N2_1BI.DAO
         {
             Simulacao.DataCriacaoAlteracao = DateTime.Now;
 
-            string sql = "UPDATE Simulacao SET IdUsuario=@IdUsuario, IdMotor=@IdMotor, Nome=@Nome, DataCriacaoAlteracao=@DataCriacaoAlteracao where Id=@Id";
+            string sql = "UPDATE Simulacao SET IdUsuario=@IdUsuario, IdMotor=@IdMotor, Nome=@Nome, DataCriacaoAlteracao=@DataCriacaoAlteracao, Media=@Media, Min=@Min, Max=@Max, DataInicio=@DataInicio, DataFim=@DataFim where Id=@Id";
 
             HelperDAO.ExecutaSQL(sql, CriaParametros(Simulacao));
         }
@@ -70,8 +77,6 @@ namespace PBL_N2_1BI.DAO
                     listaSimulacao.Add(MontaModelConsulta(row));
                 }
             }
-
-            //SalvaDados();
 
             if (!string.IsNullOrEmpty(simulacaoConsulta.Nome))
                 listaSimulacao = listaSimulacao.Where(xs => xs.Nome.ToLower().Trim().Contains(simulacaoConsulta.Nome.ToLower().Trim())).ToList();
@@ -131,11 +136,23 @@ namespace PBL_N2_1BI.DAO
             Simulacao.Nome = registro["nome"].ToString();
             Simulacao.DataCriacaoAlteracao = Convert.ToDateTime(registro["dataCriacaoAlteracao"].ToString());
 
+            if (registro["dataInicio"] != DBNull.Value)
+                Simulacao.DataInicio = Convert.ToDateTime(registro["dataInicio"].ToString());
+            if (registro["dataFim"] != DBNull.Value)
+                Simulacao.DataFim = Convert.ToDateTime(registro["dataFim"].ToString());
+
             Simulacao.Motor = new MotorDAO().PesquisarPorId(Convert.ToInt32(registro["idMotor"]));
             Simulacao.Usuario = new UsuarioDAO().PesquisarPorId(Convert.ToInt32(registro["idUsuario"]));
 
             Simulacao.IdUsuario = Convert.ToInt32(registro["idUsuario"]);
             Simulacao.IdMotor = Convert.ToInt32(registro["idMotor"]);
+
+            if (registro["media"] != DBNull.Value)
+                Simulacao.Media = Convert.ToDecimal(registro["media"]);
+            if (registro["max"] != DBNull.Value)
+                Simulacao.Max = Convert.ToDecimal(registro["max"]);
+            if (registro["min"] != DBNull.Value)
+                Simulacao.Min = Convert.ToDecimal(registro["min"]);
 
             return Simulacao;
         }

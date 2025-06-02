@@ -67,6 +67,15 @@ public class DashboardController : Controller
         client.DefaultRequestHeaders.Add("fiware-service", "smart");
         client.DefaultRequestHeaders.Add("fiware-servicepath", "/");
 
+        if (dateFrom.ToShortDateString() != "01/01/0001")
+        {
+            dateFrom = dateFrom.AddHours(-3);
+        }
+        if (dateTo.ToShortDateString() != "01/01/0001")
+        {
+            dateTo = dateTo.AddHours(-3);
+        }
+
         string dateFromStr = dateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
 
         DateTime dateToCorrigido = dateTo.AddDays(1);
@@ -84,11 +93,11 @@ public class DashboardController : Controller
 
             if(dateFrom.ToShortDateString() != "01/01/0001")
             {
-                url += $"&dateFrom ={dateFromStr}";             
+                url += $"&dateFrom={dateFromStr}";             
             }
             if (dateFrom.ToShortDateString() != "01/01/0001")
             {
-                url += $"&dateTo ={dateToStr}";
+                url += $"&dateTo={dateToStr}";
             }
 
             var response = await client.GetAsync(url);

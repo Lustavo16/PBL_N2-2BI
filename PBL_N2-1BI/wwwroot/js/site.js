@@ -7,6 +7,7 @@ var valoresTemp = [];
 var table;
 var ipRequisicao = "35.171.156.216";
 var listaPermissoes = [];
+var listaTempSimulacao = []
 
 var dashboard2 = function () {
 
@@ -102,7 +103,11 @@ var dashboard2 = function () {
             if (valores.length > 0) {
                 min = Math.min(...valores);
                 max = Math.max(...valores);
-                media = (valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(2);
+                media = (
+                    valores
+                        .map(v => parseFloat(v)) // converte para número
+                        .reduce((a, b) => a + b, 0) / valores.length
+                ).toFixed(2);
             }
         }
 
@@ -145,7 +150,7 @@ var dashboard2 = function () {
             table.clear();
 
             registros.map(function (item) {
-                var data = new Date(item[0]).toLocaleString("pt-BR")
+                var data = new Date(new Date(item[0]).setHours(new Date(item[0]).getHours() + 3)).toLocaleString("pt-BR");
                 var valor = item[1];
 
                 table.row.add([
@@ -611,7 +616,7 @@ var historicoSection = function () {
                 "atributo": "temperature",
                 "dateFrom": $("#DataInicio").val(),
                 "dateTo": $("#DataFim").val(),
-                "intervalo" : $('#Intervalo').val()
+                "intervalo": $('#Intervalo').val()
             },
             method: "GET"
         }).done(function (response) {
@@ -629,7 +634,7 @@ var historicoSection = function () {
             table.clear();
 
             registros.map(function (item) {
-                var data = new Date(item[0]).toLocaleString("pt-BR")
+                var data = new Date(new Date(item[0]).setHours(new Date(item[0]).getHours() + 3)).toLocaleString("pt-BR");
                 var valor = item[1];
 
                 table.row.add([
@@ -646,5 +651,84 @@ var historicoSection = function () {
         consultaHistorico: consultaHistorico,
         montarTabelaRegistros: montarTabelaRegistros,
         confirmarBusca: confirmarBusca
+    }
+}();
+
+var simulacaoSection = function () {
+
+    function exibirLoading() {
+        $('#overlay-loading').show();
+    }
+
+    function esconderLoading() {
+        $('#overlay-loading').hide();
+    }
+
+    const onchangeCalculos = async function () {
+        let dataInicio = $("#DataInicio").val();
+        let dataFim = $("#DataFim").val();
+
+        let midVal = 0;
+        let minVal = 0;
+        let maxVal = 0;
+
+        if (dataInicio && dataInicio != "01/01/0001" && dataFim && dataFim != "01/01/0001")
+            await consultaHistorico(dataInicio, dataFim);
+
+        if (listaTempSimulacao.length > 0) {
+            let valores = listaTempSimulacao.map(p => p[1].toFixed(2));
+
+            if (valores.length > 0) {
+                minVal = Math.min(...valores.filter(xs => xs > 0)).toFixed(2)
+                maxVal = Math.max(...valores).toFixed(2)
+                midVal = (
+                    valores
+                        .map(v => parseFloat(v)) // converte para número
+                        .reduce((a, b) => a + b, 0) / valores.length
+                ).toFixed(2);
+
+                if (midVal > 0)
+                    $("#media").val(midVal.replace(".", ","));
+                if (minVal > 0)
+                    $("#min").val(minVal.replace(".", ","));
+                if (maxVal > 0)
+                    $("#max").val(maxVal.replace(".", ","));
+            }
+        }
+    }
+
+    const consultaHistorico = async function (dataInicio, dataFim) {
+        exibirLoading();
+        await new Promise((resolve, reject) => {
+            $.ajax({
+                url: "/Historico/ObterDadosAgregadosMedia",
+                data: {
+                    ip: ipRequisicao,
+                    tipoSensor: "Temp",
+                    idSensor: "urn:ngsi-ld:Temp:001",
+                    atributo: "temperature",
+                    dateFrom: dataInicio,
+                    dateTo: dataFim
+                },
+                method: "GET"
+            }).always(function () {
+                esconderLoading();
+            })
+                .done(function (response) {
+                    if (response) {
+                        listaTempSimulacao = response;
+                    }
+                    resolve();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    console.error("Erro na requisição:", textStatus, errorThrown);
+                    reject(errorThrown);
+                });
+        });
+    }
+
+    return {
+        onchangeCalculos: onchangeCalculos,
+        consultaHistorico: consultaHistorico,
     }
 }();

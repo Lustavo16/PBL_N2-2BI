@@ -26,7 +26,12 @@ Id int not null primary key,
 Nome varchar(100) null,
 DataCriacaoAlteracao datetime null,
 IdMotor int not null,
-IdUsuario int not null
+IdUsuario int not null,
+Media decimal(18,2), 
+[Min] decimal(18,2), 
+[Max] decimal(18,2), 
+DataInicio datetime, 
+DataFim datetime
 )
 alter table Simulacao add constraint FK_IdMotor Foreign Key(IdMotor) references Motor(Id)
 alter table Simulacao add constraint FK_IdUsuario Foreign Key(IdUsuario) references Usuarios(Id)
