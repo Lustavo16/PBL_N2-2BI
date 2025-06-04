@@ -455,16 +455,15 @@ var dashboard1 = function () {
     }
 
     const onChangeExibirErro = function () {
-        let exibirErro = $('#exibirErro').checked
+        let exibirErro = $('#exibirErro').prop('checked')
         let tempAtual = 0;
 
         if (valoresTemp && valoresTemp.length > 0) {
             tempAtual = valoresTemp[valoresTemp.length - 1].attrValue;
 
             let erro = (setPoint - tempAtual) / 1 + ganho;
-
             if (exibirErro)
-                $('#erroEstacionario').val(erro)
+                $('#erroEstacionario').val(erro.toFixed(2))
             else
                 $('#erroEstacionario').val('')
         }
@@ -488,10 +487,10 @@ var dashboard1 = function () {
                     montarTabelaRegistros(valoresTemp)
 
                     let erro = (setPoint - response[0].attrValue) / 1 + ganho;
-                    let exibirErro = $('#exibirErro').checked
+                    let exibirErro = $('#exibirErro').prop('checked')
 
                     if (exibirErro)
-                        $('#erroEstacionario').val(erro)
+                        $('#erroEstacionario').val(erro.toFixed(2))
                     else
                         $('#erroEstacionario').val('')
 
