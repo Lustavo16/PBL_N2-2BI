@@ -40,8 +40,16 @@
                 <label for="ValMin">Valor mínimo aceitável:</label>
                 <input type="text" class="historico-input" placeholder="Valor mínimo aceitável" id="ValMin" name="ValMin" maxlength="4">
             </div>
+            <br>
+            <div class="historico-filter-group">
+                <label>Erro estacionário:</label>
+            </div>
+            <div class="historico-filter-group">
+                <br>
+                <input id="erroEstacionario" class="historico-input" type="text" disabled="disabled" />
+                <input id="exibirErro" class="perfil-checkbox-input" type="checkbox" onchange="dashboard1.onChangeExibirErro()" />
+            </div>
         </div>
-        <br>
         <div class="row mb-4 dashboard-row">
             <div class="gauge-container">
                 <canvas id="gaugeChart"></canvas>

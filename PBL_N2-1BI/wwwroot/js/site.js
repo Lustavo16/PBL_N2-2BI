@@ -8,6 +8,8 @@ var table;
 var ipRequisicao = "35.171.156.216";
 var listaPermissoes = [];
 var listaTempSimulacao = []
+var setPoint = 35;
+var ganho = 0.8144;
 
 var dashboard2 = function () {
 
@@ -419,6 +421,22 @@ var dashboard1 = function () {
 
     }
 
+    const onChangeExibirErro = function () {
+        let exibirErro = $('#exibirErro').checked
+        let tempAtual = 0;
+
+        if (valoresTemp && valoresTemp.length > 0) {
+            tempAtual = valoresTemp[valoresTemp.length - 1].attrValue;
+
+            let erro = (setPoint - tempAtual) / 1 + ganho;
+
+            if (exibirErro)
+                $('#erroEstacionario').val(erro)
+            else
+                $('#erroEstacionario').val('')
+        }
+    }
+
     const consultaUltimaTemperatura = async function () {
         await new Promise(resolve =>
             $.ajax({
@@ -435,6 +453,14 @@ var dashboard1 = function () {
                 if (response) {
                     valoresTemp.push(response[0]);
                     montarTabelaRegistros(valoresTemp)
+
+                    let erro = (setPoint - response[0].attrValue) / 1 + ganho;
+                    let exibirErro = $('#exibirErro').checked
+
+                    if (exibirErro)
+                        $('#erroEstacionario').val(erro)
+                    else
+                        $('#erroEstacionario').val('')
 
                     let max = $('#ValMax').val();
                     let min = $('#ValMin').val();
@@ -481,6 +507,7 @@ var dashboard1 = function () {
         resetarZoom: resetarZoom,
         onOffLed: onOffLed,
         ledOnOffAsync: ledOnOffAsync,
+        onChangeExibirErro: onChangeExibirErro,
     }
 }();
 
