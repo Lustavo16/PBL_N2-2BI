@@ -31,9 +31,12 @@
                 <label class="filter-label" for="DataFim">Data Fim:</label>
                 <input class="dashboard-input historico-input" type="date" id="DataFim" value="@ViewBag.DataFim" name="DataFim" style="width: auto;" />
             </div>
-
+            <div id="overlay-loading" class="perfil-loading-overlay">
+                <div class="perfil-spinner"></div>
+                <p>Carregando...</p>
+            </div>
             <div class="filter-group">
-                <button class="historico-button" type="button" onclick="dashboard2.consultaHistorico()">Buscar</button>
+                <button class="historico-button" type="button" onclick="dashboard2.confirmarBusca()">Buscar</button>
             </div>
         </div>
         <div class="row">

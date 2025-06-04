@@ -1,3 +1,7 @@
+create database AulaDB
+
+use AulaDB
+
 create table Usuarios
 (
 Id int not null primary key,

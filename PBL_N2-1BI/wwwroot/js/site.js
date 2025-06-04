@@ -13,6 +13,14 @@ var ganho = 0.8144;
 
 var dashboard2 = function () {
 
+    function exibirLoading() {
+        $('#overlay-loading').show();
+    }
+
+    function esconderLoading() {
+        $('#overlay-loading').hide();
+    }
+
     const carregarDados = function () {
 
         graficoTemperatura();
@@ -165,7 +173,28 @@ var dashboard2 = function () {
         }
     }
 
+    const confirmarBusca = function () {
+
+        Swal.fire({
+            title: 'Aviso!',
+            text: "Selecionar longos períodos pode causar lentidão, deseja prosseguir com a busca?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sim, prosseguir!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                consultaHistorico();
+            }
+        });
+    }
+
     const consultaHistorico = function () {
+
+        exibirLoading();
+
         $.ajax({
             url: "/Dashboard/ObterDadosAgregadosMedia",
             data: {
@@ -185,7 +214,10 @@ var dashboard2 = function () {
 
                 carregarDados();
             }
+        }).always(function () {
+            esconderLoading();
         })
+
     }
 
     return {
@@ -195,6 +227,7 @@ var dashboard2 = function () {
         montarTabelaRegistros: montarTabelaRegistros,
         resetarZoom: resetarZoom,
         consultaHistorico: consultaHistorico,
+        confirmarBusca: confirmarBusca,
     }
 }();
 
@@ -649,6 +682,14 @@ var perfilSection = function () {
 
 var historicoSection = function () {
 
+    function exibirLoading() {
+        $('#overlay-loading').show();
+    }
+
+    function esconderLoading() {
+        $('#overlay-loading').hide();
+    }
+
     const confirmarBusca = function () {
 
         Swal.fire({
@@ -668,6 +709,9 @@ var historicoSection = function () {
     }
 
     const consultaHistorico = function () {
+
+        exibirLoading();
+
         $.ajax({
             url: "/Historico/ObterDadosAgregadosMedia",
             data: {
@@ -686,6 +730,8 @@ var historicoSection = function () {
                 valoresTemp = response;
                 montarTabelaRegistros(response)
             }
+        }).always(function () {
+            esconderLoading();
         })
     }
 
