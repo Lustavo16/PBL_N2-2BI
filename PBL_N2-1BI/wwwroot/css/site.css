@@ -156,24 +156,20 @@
     }
 }
 
-/* Loading Overlay Styles */
 .perfil-loading-overlay {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: auto; /* Ajuste conforme necessário */
-    height: auto; /* Ajuste conforme necessário */
-    padding: 20px; /* Para espaçamento interno */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 9999;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     color: white;
     font-size: 20px;
-    display: none;
 }
 
 .perfil-spinner {

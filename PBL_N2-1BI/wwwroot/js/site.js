@@ -14,7 +14,7 @@ var ganho = 0.8144;
 var dashboard2 = function () {
 
     function exibirLoading() {
-        $('#overlay-loading').show();
+        $('#overlay-loading').css('display', 'flex');
     }
 
     function esconderLoading() {
@@ -682,7 +682,7 @@ var perfilSection = function () {
 var historicoSection = function () {
 
     function exibirLoading() {
-        $('#overlay-loading').show();
+        $('#overlay-loading').css('display', 'flex');
     }
 
     function esconderLoading() {
@@ -763,7 +763,7 @@ var historicoSection = function () {
 var simulacaoSection = function () {
 
     function exibirLoading() {
-        $('#overlay-loading').show();
+        $('#overlay-loading').css('display', 'flex');
     }
 
     function esconderLoading() {

@@ -1,8 +1,8 @@
 ﻿using PBL_N2_1BI.Models;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Data;
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace PBL_N2_1BI.DAO

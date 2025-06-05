@@ -40,10 +40,17 @@
             <input type="text" class="historico-input" placeholder="Valor mínimo aceitável" id="ValMin" name="ValMin" maxlength="4">
         </div>
     </div>
+    <br>
 
     <hr class="historico-divider">
 
     <h5>Histórico de Leituras</h5>
+    <div class="legenda mb-3">
+        <strong>Legenda:</strong>
+        <span class="badge badge-danger">🔴 Acima do aceitável</span>
+        <span class="badge badge-success">🟢 Dentro do aceitável</span>
+        <span class="badge badge-warning text-dark">🟡 Abaixo do aceitável</span>
+    </div>
     <table id="tabelaRegistros" class="historico-table">
         <thead>
             <tr>

@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using PBL_N2_1BI.Models;
 
 namespace PBL_N2_1BI.Controllers
 {
@@ -13,97 +14,117 @@ namespace PBL_N2_1BI.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         public async Task<ContentResult> ObterDadosAgregadosMedia(string ip, string tipoSensor, string idSensor, string atributo, DateTime dateFrom, DateTime dateTo, int intervalo = 1)
         {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("fiware-service", "smart");
-            client.DefaultRequestHeaders.Add("fiware-servicepath", "/");
-
-            string dateFromStr = dateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-
-            DateTime dateToCorrigido = dateTo.AddDays(1);
-            string dateToStr = dateToCorrigido.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-
-            int offset = 0;
-            bool temMaisDados = true;
-
-            var todosRegistros = new List<(DateTime timestamp, double valor)>();
-
-            while (temMaisDados)
+            try
             {
-                var url = $"http://{ip}:8666/STH/v1/contextEntities/type/{tipoSensor}/id/{idSensor}/attributes/{atributo}" +
-                          $"?hLimit=100&hOffset={offset}";
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("fiware-service", "smart");
+                client.DefaultRequestHeaders.Add("fiware-servicepath", "/");
 
-                if (dateFrom.ToShortDateString() != "01/01/0001")
+                string dateFromStr = dateFrom.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+
+                DateTime dateToCorrigido = dateTo.AddDays(1);
+                string dateToStr = dateToCorrigido.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+
+                int offset = 0;
+                bool temMaisDados = true;
+
+                var todosRegistros = new List<(DateTime timestamp, double valor)>();
+
+                while (temMaisDados)
                 {
-                    url += $"&dateFrom={dateFromStr}";
-                }
-                if (dateFrom.ToShortDateString() != "01/01/0001")
-                {
-                    url += $"&dateTo={dateToStr}";
-                }
+                    var url = $"http://{ip}:8666/STH/v1/contextEntities/type/{tipoSensor}/id/{idSensor}/attributes/{atributo}" +
+                              $"?hLimit=100&hOffset={offset}";
 
-                var response = await client.GetAsync(url);
-                if (!response.IsSuccessStatusCode)
-                    break;
-
-                var content = await response.Content.ReadAsStringAsync();
-
-                using var doc = JsonDocument.Parse(content);
-                var root = doc.RootElement;
-
-                var valuesElement = root
-                    .GetProperty("contextResponses")[0]
-                    .GetProperty("contextElement")
-                    .GetProperty("attributes")[0]
-                    .GetProperty("values");
-
-                if (valuesElement.GetArrayLength() == 0)
-                {
-                    temMaisDados = false;
-                    break;
-                }
-
-                foreach (var item in valuesElement.EnumerateArray())
-                {
-                    if (item.ValueKind == JsonValueKind.Object)
+                    if (dateFrom.ToShortDateString() != "01/01/0001")
                     {
-                        var tsStr = item.GetProperty("recvTime").GetString();
-                        var val = item.GetProperty("attrValue").GetDouble();
+                        url += $"&dateFrom={dateFromStr}";
+                    }
+                    if (dateFrom.ToShortDateString() != "01/01/0001")
+                    {
+                        url += $"&dateTo={dateToStr}";
+                    }
 
-                        if (DateTime.TryParse(tsStr, out DateTime dt))
+                    var response = await client.GetAsync(url);
+                    if (!response.IsSuccessStatusCode)
+                        break;
+
+                    var content = await response.Content.ReadAsStringAsync();
+
+                    using var doc = JsonDocument.Parse(content);
+                    var root = doc.RootElement;
+
+                    var valuesElement = root
+                        .GetProperty("contextResponses")[0]
+                        .GetProperty("contextElement")
+                        .GetProperty("attributes")[0]
+                        .GetProperty("values");
+
+                    if (valuesElement.GetArrayLength() == 0)
+                    {
+                        temMaisDados = false;
+                        break;
+                    }
+
+                    foreach (var item in valuesElement.EnumerateArray())
+                    {
+                        if (item.ValueKind == JsonValueKind.Object)
                         {
-                            todosRegistros.Add((dt, val));
+                            var tsStr = item.GetProperty("recvTime").GetString();
+                            var val = item.GetProperty("attrValue").GetDouble();
+
+                            if (DateTime.TryParse(tsStr, out DateTime dt))
+                            {
+                                todosRegistros.Add((dt, val));
+                            }
                         }
                     }
+
+                    offset += 100;
                 }
 
-                offset += 100;
-            }
+                var agrupados = todosRegistros
+                    .OrderBy(x => x.timestamp)
+                    .GroupBy(x => (long)(x.timestamp - todosRegistros[0].timestamp).TotalSeconds / intervalo)
+                    .Select(g => new
+                    {
+                        timestamp = g.First().timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                        valorMedio = g.Average(x => x.valor)
+                    })
+                    .ToList();
 
-            var agrupados = todosRegistros
-                .OrderBy(x => x.timestamp)
-                .GroupBy(x => (long)(x.timestamp - todosRegistros[0].timestamp).TotalSeconds / intervalo)
-                .Select(g => new
+                var valuesJsonArray = new JsonArray();
+
+                foreach (var grupo in agrupados)
                 {
-                    timestamp = g.First().timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                    valorMedio = g.Average(x => x.valor)
-                })
-                .ToList();
+                    valuesJsonArray.Add(new JsonArray { grupo.timestamp, grupo.valorMedio });
+                }
 
-            var valuesJsonArray = new JsonArray();
+                var jsonFinal = valuesJsonArray.ToJsonString();
 
-            foreach (var grupo in agrupados)
-            {
-                valuesJsonArray.Add(new JsonArray { grupo.timestamp, grupo.valorMedio });
+                return Content(jsonFinal, "application/json");
             }
+            catch (Exception ex)
+            {
+                Erro(ex);
+                return null;
+            }
+        }
 
-            var jsonFinal = valuesJsonArray.ToJsonString();
-
-            return Content(jsonFinal, "application/json");
+        public IActionResult Erro(Exception ex)
+        {
+            return View("Error", new ErrorViewModel(ex.ToString()));
         }
     }
 }

@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using PBL_N2_1BI.DAO;
-using PBL_N2_1BI.Models;
-using System.Collections.Generic;
-using System;
 using PBL_N2_1BI.Filters;
-using Microsoft.AspNetCore.Http;
+using PBL_N2_1BI.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json.Nodes;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace PBL_N2_1BI.Controllers
@@ -18,49 +18,71 @@ namespace PBL_N2_1BI.Controllers
         [SessionAuthorize]
         public IActionResult Consulta(SimulacaoViewModel simulacaoConsulta)
         {
-            ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
-            HttpContext.Session.Remove("MensagemErro");
+            try
+            {
+                ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
+                HttpContext.Session.Remove("MensagemErro");
 
-            List<SimulacaoViewModel> listaSimulacao = new List<SimulacaoViewModel>();
+                List<SimulacaoViewModel> listaSimulacao = new List<SimulacaoViewModel>();
 
-            listaSimulacao = new SimulacaoDAO().ListarSimulacao(simulacaoConsulta);
+                listaSimulacao = new SimulacaoDAO().ListarSimulacao(simulacaoConsulta);
 
-            ViewBag.Motores = new MotorDAO().ListarMotores(new MotorViewModel());
-            ViewBag.Usuarios = new UsuarioDAO().ListarUsuarios(new UsuarioViewModel());
+                ViewBag.Motores = new MotorDAO().ListarMotores(new MotorViewModel());
+                ViewBag.Usuarios = new UsuarioDAO().ListarUsuarios(new UsuarioViewModel());
 
-            ViewBag.Filtros = simulacaoConsulta;
+                ViewBag.Filtros = simulacaoConsulta;
 
-            return View(listaSimulacao);
+                return View(listaSimulacao);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         [SessionAuthorize]
         public IActionResult Adicionar()
         {
-            SimulacaoViewModel SimulacaoNovo = new SimulacaoViewModel();
-            ViewBag.Motores = new MotorDAO().ListarMotores(new MotorViewModel());
-            ViewBag.Usuarios = new UsuarioDAO().ListarUsuarios(new UsuarioViewModel());
-            
-            return View("Cadastro", SimulacaoNovo);
+            try
+            {
+                SimulacaoViewModel SimulacaoNovo = new SimulacaoViewModel();
+                ViewBag.Motores = new MotorDAO().ListarMotores(new MotorViewModel());
+                ViewBag.Usuarios = new UsuarioDAO().ListarUsuarios(new UsuarioViewModel());
+
+                return View("Cadastro", SimulacaoNovo);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         [SessionAuthorize]
         public IActionResult Editar(int idSimulacao)
         {
-            SimulacaoViewModel SimulacaoNovo = new SimulacaoViewModel();
+            try
+            {
+                SimulacaoViewModel SimulacaoNovo = new SimulacaoViewModel();
 
-            SimulacaoNovo = new SimulacaoDAO().PesquisarPorId(idSimulacao);
+                SimulacaoNovo = new SimulacaoDAO().PesquisarPorId(idSimulacao);
 
-            ViewBag.Motores = new MotorDAO().ListarMotores(new MotorViewModel());
-            ViewBag.Usuarios = new UsuarioDAO().ListarUsuarios(new UsuarioViewModel());
+                ViewBag.Motores = new MotorDAO().ListarMotores(new MotorViewModel());
+                ViewBag.Usuarios = new UsuarioDAO().ListarUsuarios(new UsuarioViewModel());
 
-            return View("Cadastro", SimulacaoNovo);
+                return View("Cadastro", SimulacaoNovo);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         public IActionResult Salvar(SimulacaoViewModel Simulacao)
         {
-            SimulacaoDAO dao = new SimulacaoDAO();
             try
             {
+                SimulacaoDAO dao = new SimulacaoDAO();
+
                 if (!Simulacao.Id.HasValue)
                 {
                     dao.Inserir(Simulacao);
@@ -71,12 +93,13 @@ namespace PBL_N2_1BI.Controllers
                     dao.Alterar(Simulacao);
                     TempData["Mensagem"] = "Simulação alterada com sucesso!";
                 }
+                return RedirectToAction("Consulta");
+
             }
             catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
-            return RedirectToAction("Consulta");
         }
 
         [SessionAuthorize]
@@ -85,18 +108,22 @@ namespace PBL_N2_1BI.Controllers
             try
             {
                 new SimulacaoDAO().Excluir(Id);
+
                 TempData["Mensagem"] = "Simulação excluída com sucesso!";
+
+                return RedirectToAction("Consulta");
             }
             catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
-            return RedirectToAction("Consulta");
         }
 
         public async Task<ContentResult> ObterDadosAgregadosMedia(string ip, string tipoSensor, string idSensor, string atributo, DateTime dateFrom, DateTime dateTo)
         {
-            using var client = new HttpClient();
+            try
+            {
+                using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("fiware-service", "smart");
             client.DefaultRequestHeaders.Add("fiware-servicepath", "/");
 
@@ -182,6 +209,17 @@ namespace PBL_N2_1BI.Controllers
             var jsonFinal = valuesJsonArray.ToJsonString();
 
             return Content(jsonFinal, "application/json");
+            }
+            catch (Exception ex)
+            {
+                Erro(ex);
+                return null;
+            }
+        }
+
+        public IActionResult Erro(Exception ex)
+        {
+            return View("Error", new ErrorViewModel(ex.ToString()));
         }
     }
 }

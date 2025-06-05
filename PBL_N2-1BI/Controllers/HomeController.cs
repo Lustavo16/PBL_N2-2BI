@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PBL_N2_1BI.Models;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Threading.Tasks;
-using PBL_N2_1BI.Filters;
-using Microsoft.AspNetCore.Http;
+using System;
 
 namespace PBL_N2_1BI.Controllers
 {
@@ -20,21 +17,34 @@ namespace PBL_N2_1BI.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
-            HttpContext.Session.Remove("MensagemErro");
+            try
+            {
+                ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
+                HttpContext.Session.Remove("MensagemErro");
 
-            return View();
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
-      
+
         public IActionResult Sobre()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Erro(Exception ex)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View("Error", new ErrorViewModel(ex.ToString()));
         }
     }
 }

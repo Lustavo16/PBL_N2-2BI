@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 using Newtonsoft.Json;
 using PBL_N2_1BI.DAO;
 using PBL_N2_1BI.Models;
@@ -32,6 +31,7 @@ namespace PBL_N2_1BI.Controllers
                 }
 
                 return View(loginUsuario);
+
             }
             catch (Exception ex)
             {

@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using PBL_N2_1BI.DAO;
-using PBL_N2_1BI.Models;
-using System.Collections.Generic;
-using System;
 using PBL_N2_1BI.Filters;
-using Microsoft.AspNetCore.Http;
+using PBL_N2_1BI.Models;
+using System;
+using System.Collections.Generic;
 
 namespace PBL_N2_1BI.Controllers
 {
@@ -13,38 +13,60 @@ namespace PBL_N2_1BI.Controllers
         [SessionAuthorize]
         public IActionResult Consulta(MotorViewModel motorConsulta)
         {
-            ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
-            HttpContext.Session.Remove("MensagemErro");
+            try
+            {
+                ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
+                HttpContext.Session.Remove("MensagemErro");
 
-            List<MotorViewModel> listaMotores = new List<MotorViewModel>();
-            listaMotores = new MotorDAO().ListarMotores(motorConsulta);
+                List<MotorViewModel> listaMotores = new List<MotorViewModel>();
+                listaMotores = new MotorDAO().ListarMotores(motorConsulta);
 
-            ViewBag.Filtros = motorConsulta;
+                ViewBag.Filtros = motorConsulta;
 
-            return View(listaMotores);
+                return View(listaMotores);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         [SessionAuthorize]
         public IActionResult Adicionar()
         {
-            MotorViewModel motorNovo = new MotorViewModel();
-            return View("Cadastro", motorNovo);
+            try
+            {
+                MotorViewModel motorNovo = new MotorViewModel();
+                return View("Cadastro", motorNovo);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         [SessionAuthorize]
         public IActionResult Editar(int idMotor)
         {
-            MotorViewModel motorNovo = new MotorViewModel();
-            motorNovo = new MotorDAO().PesquisarPorId(idMotor);
+            try
+            {
+                MotorViewModel motorNovo = new MotorViewModel();
+                motorNovo = new MotorDAO().PesquisarPorId(idMotor);
 
-            return View("Cadastro", motorNovo);
+                return View("Cadastro", motorNovo);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         public IActionResult Salvar(MotorViewModel motor)
         {
-            MotorDAO dao = new MotorDAO();
             try
             {
+                MotorDAO dao = new MotorDAO();
+
                 if (!motor.Id.HasValue)
                 {
                     dao.Inserir(motor);
@@ -55,12 +77,13 @@ namespace PBL_N2_1BI.Controllers
                     dao.Alterar(motor);
                     TempData["Mensagem"] = "Motor alterado com sucesso!";
                 }
+                return RedirectToAction("Consulta");
+
             }
             catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
-            return RedirectToAction("Consulta");
         }
 
         [SessionAuthorize]
@@ -70,12 +93,15 @@ namespace PBL_N2_1BI.Controllers
             {
                 new MotorDAO().Excluir(Id);
                 TempData["Mensagem"] = "Motor excluído com sucesso!";
+
+                return RedirectToAction("Consulta");
+
             }
             catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
-            return RedirectToAction("Consulta");
+
         }
     }
 }

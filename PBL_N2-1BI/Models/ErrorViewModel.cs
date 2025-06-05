@@ -4,14 +4,16 @@ namespace PBL_N2_1BI.Models
 {
     public class ErrorViewModel
     {
-        public ErrorViewModel(string erro)
+        public ErrorViewModel(string erro, string requestId = null)
         {
-            this.Erro = erro;
+            Erro = erro;
+            RequestId = requestId;
         }
 
         public ErrorViewModel()
         {
         }
+
         public string Erro { get; set; }
         public string RequestId { get; set; }
 

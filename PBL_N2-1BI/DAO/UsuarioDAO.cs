@@ -1,12 +1,10 @@
-﻿using PBL_N2_1BI.Models;
+﻿using PBL_N2_1BI.Crypto;
+using PBL_N2_1BI.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using BCrypt.Net;
-using PBL_N2_1BI.Crypto;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace PBL_N2_1BI.DAO
 {

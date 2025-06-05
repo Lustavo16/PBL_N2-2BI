@@ -6,7 +6,6 @@ using PBL_N2_1BI.Filters;
 using PBL_N2_1BI.Models;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace PBL_N2_1BI.Controllers
 {
@@ -15,48 +14,70 @@ namespace PBL_N2_1BI.Controllers
         [SessionAuthorize]
         public IActionResult Consulta(UsuarioViewModel usuarioConsulta)
         {
-            ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
-            HttpContext.Session.Remove("MensagemErro");
+            try
+            {
+                ViewBag.MensagemErro = HttpContext.Session.GetString("MensagemErro");
+                HttpContext.Session.Remove("MensagemErro");
 
-            List<UsuarioViewModel> listaUauarios = new List<UsuarioViewModel>();
-            listaUauarios = new UsuarioDAO().ListarUsuarios(usuarioConsulta);
+                List<UsuarioViewModel> listaUauarios = new List<UsuarioViewModel>();
+                listaUauarios = new UsuarioDAO().ListarUsuarios(usuarioConsulta);
 
-            string TesteExtraiLogin = HttpContext.Session.GetString("Login");
+                string TesteExtraiLogin = HttpContext.Session.GetString("Login");
 
-            ViewBag.Filtros = usuarioConsulta;
+                ViewBag.Filtros = usuarioConsulta;
 
-            return View(listaUauarios);
+                return View(listaUauarios);
+
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         [SessionAuthorize]
         public IActionResult Adicionar()
         {
-            UsuarioViewModel usuarioNovo = new UsuarioViewModel();
-            ViewBag.Perfis = new PerfilDAO().ListarPerfis(new PerfilViewModel());
+            try
+            {
+                UsuarioViewModel usuarioNovo = new UsuarioViewModel();
+                ViewBag.Perfis = new PerfilDAO().ListarPerfis(new PerfilViewModel());
 
-            return View("Cadastro", usuarioNovo);
+                return View("Cadastro", usuarioNovo);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         [SessionAuthorize]
         public IActionResult Editar(int idUsuario)
         {
-            UsuarioViewModel usuarioNovo = new UsuarioViewModel();
+            try
+            {
+                UsuarioViewModel usuarioNovo = new UsuarioViewModel();
 
-            usuarioNovo = new UsuarioDAO().PesquisarPorId(idUsuario);
+                usuarioNovo = new UsuarioDAO().PesquisarPorId(idUsuario);
 
-            usuarioNovo.FotoBase64 = usuarioNovo.Foto != null ? Convert.ToBase64String(usuarioNovo.Foto) : null;
+                usuarioNovo.FotoBase64 = usuarioNovo.Foto != null ? Convert.ToBase64String(usuarioNovo.Foto) : null;
 
-            ViewBag.Perfis = new PerfilDAO().ListarPerfis(new PerfilViewModel());
+                ViewBag.Perfis = new PerfilDAO().ListarPerfis(new PerfilViewModel());
 
-            return View("Cadastro", usuarioNovo);
+                return View("Cadastro", usuarioNovo);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         [HttpPost]
         public IActionResult Salvar(UsuarioViewModel usuario)
         {
-            UsuarioDAO dao = new UsuarioDAO();
             try
             {
+                UsuarioDAO dao = new UsuarioDAO();
                 var arquivo = Request.Form.Files["Foto"];
                 if (arquivo != null && arquivo.Length > 0)
                 {
@@ -109,13 +130,15 @@ namespace PBL_N2_1BI.Controllers
                     TempData["Mensagem"] = "Usuário salvo com sucesso!";
                     return RedirectToAction("Login", "Login");
                 }
+
+                return RedirectToAction("Consulta");
+
             }
             catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
 
-            return RedirectToAction("Consulta");
         }
 
         [SessionAuthorize]
@@ -124,14 +147,15 @@ namespace PBL_N2_1BI.Controllers
             try
             {
                 new UsuarioDAO().Excluir(Id);
+
                 TempData["Mensagem"] = "Usuário excluído com sucesso!";
+
+                return RedirectToAction("Consulta");
             }
             catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
-
-            return RedirectToAction("Consulta");
         }
     }
 }
