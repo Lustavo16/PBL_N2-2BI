@@ -22,13 +22,7 @@
                 @ViewBag.MensagemErro
             </div>
         }
-        <script>
-            function limpaCampos() {
-                $('#Modelo').val('');
-                $('#Fabricante').val('');
-                $('#NumeroDeSerie').val('');
-            }
-        </script>
+
         <div class="motor-filter-form">
             <form action="/Motor/Consulta" method="post">
                 <input id="Modelo" type="text" class="motor-filter-input" name="Modelo" placeholder="Filtrar por Modelo" value="@ViewBag.Filtros.Modelo">
@@ -38,7 +32,7 @@
                 <div class="action-buttons">
                     <div class="left-actions">
                         <input type="submit" class="btn-primary" value="Pesquisar">
-                        <button type="button" class="motor-action-button" onclick="limpaCampos()">
+                        <button type="button" class="motor-action-button" onclick="window.location.href='/Motor/Consulta'">
                             Limpar
                         </button>
                     </div>

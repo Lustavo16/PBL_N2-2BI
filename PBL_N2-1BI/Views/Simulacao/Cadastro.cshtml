@@ -9,7 +9,7 @@
     <form action="/Simulacao/Salvar" method="post" class="perfil-form-main">
         <div class="perfil-form-container">
             <h2 class="perfil-form-title">Cadastrar Simulação</h2>
-            <div class="perfil-form-content">
+            <div class="perfil-permission-section">
                 <input id="idSimulacao" type="text" name="Id" value="@Model.Id" hidden>
                 <span asp-validation-for="Nome" class="perfil-validation-error"></span>
 
@@ -55,21 +55,22 @@
                         }
                     </select>
                 </div>
-
+            </div>
+            <div class="perfil-permission-section">
                 <h3 class="perfil-section-title">Dados da Simulação</h3>
 
                 <div class="perfil-form-group">
                     <label class="perfil-form-label">Data Início:</label>
-                    <input type="datetime-local" class="perfil-form-input" id="DataInicio" name="DataInicio"
+                    <input type="date" class="perfil-form-input" id="DataInicio" name="DataInicio"
                            onchange="simulacaoSection.onchangeCalculos()"
-                           value="@(Model.DataInicio.HasValue ? Model.DataInicio.Value.ToString("yyyy-MM-ddTHH:mm") : "")">
+                           value="@(Model.DataInicio.HasValue ? Model.DataInicio.Value.ToString("yyyy-MM-dd") : "")">
                 </div>
 
                 <div class="perfil-form-group">
                     <label class="perfil-form-label">Data Fim:</label>
-                    <input type="datetime-local" class="perfil-form-input" id="DataFim" name="DataFim"
+                    <input type="date" class="perfil-form-input" id="DataFim" name="DataFim"
                            onchange="simulacaoSection.onchangeCalculos()"
-                           value="@(Model.DataFim.HasValue ? Model.DataFim.Value.ToString("yyyy-MM-ddTHH:mm") : "")">
+                           value="@(Model.DataFim.HasValue ? Model.DataFim.Value.ToString("yyyy-MM-dd") : "")">
                 </div>
 
                 <div id="overlay-loading" class="perfil-loading-overlay">
@@ -78,17 +79,17 @@
                 </div>
 
                 <div class="perfil-form-group">
-                    <label class="perfil-form-label">Média do Período:</label>
+                    <label class="perfil-form-label">Média do Período ºC:</label>
                     <input type="text" class="perfil-form-input" id="media" name="Media" value="@Model.Media" readonly>
                 </div>
 
                 <div class="perfil-form-group">
-                    <label class="perfil-form-label">Máximo do período:</label>
+                    <label class="perfil-form-label">Máximo do período ºC:</label>
                     <input type="text" class="perfil-form-input" id="max" name="Max" value="@Model.Max" readonly>
                 </div>
 
                 <div class="perfil-form-group">
-                    <label class="perfil-form-label">Mínimo do período:</label>
+                    <label class="perfil-form-label">Mínimo do período ºC:</label>
                     <input type="text" class="perfil-form-input" id="min" name="Min" value="@Model.Min" readonly>
                 </div>
             </div>

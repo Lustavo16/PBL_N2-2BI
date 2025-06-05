@@ -22,14 +22,7 @@
                 @ViewBag.MensagemErro
             </div>
         }
-        <script>
-            function limpaCampos() {
-                $('#Nome').val('');
-                $('#Login').val('');
-                $('select[name="IdMotor"]').val('');
-                $('select[name="IdUsuario"]').val('');
-            }
-        </script>
+
         <div class="filter-section">
             <form action="/Simulacao/Consulta" method="post">
                 <input id="Nome" type="text" class="filter-input" name="Nome" placeholder="Filtrar por Nome" value="@ViewBag.Filtros.Nome">
@@ -63,7 +56,7 @@
                 <div class="action-buttons">
                     <div class="left-actions">
                         <input type="submit" class="btn-primary" value="Pesquisar">
-                        <button type="button" class="btn-secondary" onclick="limpaCampos()">Limpar</button>
+                        <button type="button" class="btn-secondary" onclick="window.location.href='/Simulacao/Consulta'">Limpar</button>
                     </div>
                     <div class="right-actions">
                         <button type="button" class="btn-primary" onclick="window.location.href='/Simulacao/Adicionar'">Adicionar</button>

@@ -7,9 +7,10 @@ namespace PBL_N2_1BI.DAO
     {
         public static SqlConnection? GetConexao()
         {
-            string strCon = "Data Source=DESKTOP-AKJIQLH\\SQLEXPRESS; Initial Catalog=AulaDB; Integrated Security=True";
+            //string strCon = "Data Source=DESKTOP-AKJIQLH\\SQLEXPRESS; Initial Catalog=AulaDB; Integrated Security=True";
             //string strCon = "Data Source=LOCALHOST; user id=SA; password=123456; Initial Catalog=teste1;";
             //string strCon = "Data Source=LOCALHOST; Integrated Security=True Initial Catalog=AulaDB;";
+            string strCon = "Data Source=LOCALHOST; user id=SA; password=123456; Initial Catalog=AulaDB;";
 
             try
             {
