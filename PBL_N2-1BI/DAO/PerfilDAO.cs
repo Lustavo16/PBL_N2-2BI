@@ -9,6 +9,8 @@ namespace PBL_N2_1BI.DAO
 {
     public class PerfilDAO
     {
+        #region SQL
+
         public static SqlParameter[] CriaParametros(PerfilViewModel perfil)
         {
             SqlParameter[] parametros = new SqlParameter[3];
@@ -22,6 +24,11 @@ namespace PBL_N2_1BI.DAO
 
             return parametros;
         }
+
+        #endregion
+
+        #region CRUD
+
         public void Inserir(PerfilViewModel perfil)
         {
             perfil.Id = GerarId();
@@ -48,6 +55,10 @@ namespace PBL_N2_1BI.DAO
 
             HelperDAO.ExecutaSQL(sql, parametros);
         }
+
+        #endregion
+
+        #region Consulta
 
         public List<PerfilViewModel> ListarPerfis(PerfilViewModel perfilConsulta)
         {
@@ -101,6 +112,10 @@ namespace PBL_N2_1BI.DAO
             return perfil;
         }
 
+        #endregion
+
+        #region GerarID
+
         public int GerarId()
         {
             string sql = "select MAX(Id) + 1 from perfil";
@@ -115,6 +130,10 @@ namespace PBL_N2_1BI.DAO
             return idRetorno;
 
         }
+
+        #endregion
+
+        #region Insert Inicial
 
         public int? InsertInicial()
         {
@@ -148,7 +167,8 @@ namespace PBL_N2_1BI.DAO
             HelperDAO.ExecutaSQL(sql, CriaParametros(perfil));
 
             return perfil.Id;
-
         }
+
+        #endregion
     }
 }

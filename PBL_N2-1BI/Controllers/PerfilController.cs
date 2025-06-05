@@ -10,6 +10,8 @@ namespace PBL_N2_1BI.Controllers
 {
     public class PerfilController : Controller
     {
+        #region Consulta
+
         [SessionAuthorize]
         public IActionResult Consulta(PerfilViewModel perfilConsulta)
         {
@@ -32,6 +34,10 @@ namespace PBL_N2_1BI.Controllers
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
         }
+
+        #endregion
+
+        #region Cadastro
 
         [SessionAuthorize]
         public IActionResult Adicionar()
@@ -88,6 +94,10 @@ namespace PBL_N2_1BI.Controllers
             return RedirectToAction("Consulta");
         }
 
+        #endregion
+
+        #region Exclusão
+
         [SessionAuthorize]
         public IActionResult Excluir(int Id)
         {
@@ -103,6 +113,8 @@ namespace PBL_N2_1BI.Controllers
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
         }
+
+        #endregion
     }
 }
 

@@ -30,6 +30,10 @@ namespace PBL_N2_1BI.DAO
             return parametros;
         }
 
+        #endregion
+
+        #region CRUD
+
         public void Inserir(SimulacaoViewModel Simulacao)
         {
             Simulacao.Id = GerarId();
@@ -59,6 +63,32 @@ namespace PBL_N2_1BI.DAO
 
             HelperDAO.ExecutaSQL(sql, parametros);
         }
+
+        public void ExcluirPorIdMotor(int Id)
+        {
+            List<int> listaSimulacao = new List<int>();
+
+            SqlParameter[] parametros = new SqlParameter[] { new SqlParameter("IdMotor", Id) };
+
+            string sql = "delete from Simulacao where IdMotor=@IdMotor";
+
+            DataTable tabela = HelperDAO.ExecutaSelect(sql, parametros);
+        }
+
+        public void ExcluirPorIdUsuario(int Id)
+        {
+            List<int> listaSimulacao = new List<int>();
+
+            SqlParameter[] parametros = new SqlParameter[] { new SqlParameter("IdUsuario", Id) };
+
+            string sql = "delete from Simulacao where IdUsuario=@IdUsuario";
+
+            DataTable tabela = HelperDAO.ExecutaSelect(sql, parametros);
+        }
+
+        #endregion
+
+        #region Consulta
 
         public List<SimulacaoViewModel> ListarSimulacao(SimulacaoViewModel simulacaoConsulta)
         {
@@ -104,29 +134,7 @@ namespace PBL_N2_1BI.DAO
 
             return Simulacao;
         }
-
-        public void ExcluirPorIdMotor(int Id)
-        {
-            List<int> listaSimulacao = new List<int>();
-
-            SqlParameter[] parametros = new SqlParameter[] { new SqlParameter("IdMotor", Id) };
-
-            string sql = "delete from Simulacao where IdMotor=@IdMotor";
-
-            DataTable tabela = HelperDAO.ExecutaSelect(sql, parametros);
-        }
-
-        public void ExcluirPorIdUsuario(int Id)
-        {
-            List<int> listaSimulacao = new List<int>();
-
-            SqlParameter[] parametros = new SqlParameter[] { new SqlParameter("IdUsuario", Id) };
-
-            string sql = "delete from Simulacao where IdUsuario=@IdUsuario";
-
-            DataTable tabela = HelperDAO.ExecutaSelect(sql, parametros);
-        }
-
+        
         public static SimulacaoViewModel MontaModelConsulta(DataRow registro)
         {
             SimulacaoViewModel Simulacao = new SimulacaoViewModel();
@@ -156,7 +164,7 @@ namespace PBL_N2_1BI.DAO
             return Simulacao;
         }
 
-        #endregion Sql
+        #endregion
 
         #region Gerar Id
 

@@ -8,12 +8,19 @@ namespace PBL_N2_1BI.Controllers
 {
     public class HomeController : Controller
     {
+
+        #region Logger
+
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
+
+        #endregion
+
+        #region Direcionamentos
 
         public IActionResult Index()
         {
@@ -42,9 +49,15 @@ namespace PBL_N2_1BI.Controllers
             }
         }
 
+        #endregion
+
+        #region Tratamento de Erros
+
         public IActionResult Erro(Exception ex)
         {
             return View("Error", new ErrorViewModel(ex.ToString()));
         }
+
+        #endregion
     }
 }

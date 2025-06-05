@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 public class DashboardController : Controller
 {
+    #region Direcionamentos
+
     public IActionResult Dashboard1(DateTime? dataInicio, DateTime? dataFim)
     {
         try
@@ -34,6 +36,9 @@ public class DashboardController : Controller
         }
     }
 
+    #endregion
+
+    #region Auxiliares
     public string FormataData(DateTime? data)
     {
         try
@@ -54,6 +59,10 @@ public class DashboardController : Controller
             return null;
         }
     }
+
+    #endregion
+
+    #region Requisições API
 
     public async Task<IActionResult> ObterDadosDispositivo(string ip, string tipoSensor, string idSensor, string atributo, string quantidadeValores)
     {
@@ -222,8 +231,14 @@ public class DashboardController : Controller
         }
     }
 
+    #endregion
+
+    #region Tratamento de Erros
+
     public IActionResult Erro(Exception ex)
     {
         return View("Error", new ErrorViewModel(ex.ToString()));
     }
+
+    #endregion
 }

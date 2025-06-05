@@ -15,6 +15,8 @@ namespace PBL_N2_1BI.Controllers
 {
     public class SimulacaoController : Controller
     {
+        #region Consulta
+
         [SessionAuthorize]
         public IActionResult Consulta(SimulacaoViewModel simulacaoConsulta)
         {
@@ -39,6 +41,10 @@ namespace PBL_N2_1BI.Controllers
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
         }
+
+        #endregion
+
+        #region Cadastro
 
         [SessionAuthorize]
         public IActionResult Adicionar()
@@ -102,6 +108,10 @@ namespace PBL_N2_1BI.Controllers
             }
         }
 
+        #endregion
+
+        #region Exclusão
+
         [SessionAuthorize]
         public IActionResult Excluir(int Id)
         {
@@ -118,6 +128,10 @@ namespace PBL_N2_1BI.Controllers
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
         }
+
+        #endregion
+
+        #region Requisições API
 
         public async Task<ContentResult> ObterDadosAgregadosMedia(string ip, string tipoSensor, string idSensor, string atributo, DateTime dateFrom, DateTime dateTo)
         {
@@ -217,9 +231,15 @@ namespace PBL_N2_1BI.Controllers
             }
         }
 
+        #endregion
+
+        #region Tratamento de Erros
+
         public IActionResult Erro(Exception ex)
         {
             return View("Error", new ErrorViewModel(ex.ToString()));
         }
+
+        #endregion
     }
 }

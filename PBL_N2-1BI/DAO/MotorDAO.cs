@@ -27,7 +27,11 @@ namespace PBL_N2_1BI.DAO
             return parametros;
         }
 
-       public void Inserir(MotorViewModel motor)
+        #endregion
+
+        #region CRUD
+
+        public void Inserir(MotorViewModel motor)
         {
             motor.Id = GerarId();
 
@@ -55,32 +59,9 @@ namespace PBL_N2_1BI.DAO
             HelperDAO.ExecutaSQL(sql, parametros);
         }
 
-        public List<MotorViewModel> ListarMotores(MotorViewModel motorConsulta)
-        {
-            List<MotorViewModel> listaMotores = new List<MotorViewModel>();
+        #endregion
 
-            string sql = "select * from motor";
-            DataTable tabela = HelperDAO.ExecutaSelect(sql, null);
-
-            if (tabela.Rows.Count == 0)
-                return new List<MotorViewModel>();
-            else
-            {
-                foreach (DataRow row in tabela.Rows)
-                {
-                    listaMotores.Add(MontaModelConsulta(row));
-                }
-            }
-
-            if (!string.IsNullOrEmpty(motorConsulta.Modelo))
-                listaMotores = listaMotores.Where(xs => xs.Modelo.ToLower().Trim().Contains(motorConsulta.Modelo.ToLower().Trim())).ToList();
-            if (!string.IsNullOrEmpty(motorConsulta.Fabricante))
-                listaMotores = listaMotores.Where(xs => xs.Fabricante.ToLower().Trim().Contains(motorConsulta.Fabricante.ToLower().Trim())).ToList();
-            if (!string.IsNullOrEmpty(motorConsulta.NumeroDeSerie))
-                listaMotores = listaMotores.Where(xs => xs.NumeroDeSerie.ToLower().Trim().Contains(motorConsulta.NumeroDeSerie.ToLower().Trim())).ToList();
-
-            return listaMotores;
-        }
+        #region Consulta
 
         public MotorViewModel PesquisarPorId(int Id)
         {
@@ -113,7 +94,35 @@ namespace PBL_N2_1BI.DAO
             return motor;
         }
 
-        #endregion Sql
+        public List<MotorViewModel> ListarMotores(MotorViewModel motorConsulta)
+        {
+            List<MotorViewModel> listaMotores = new List<MotorViewModel>();
+
+            string sql = "select * from motor";
+            DataTable tabela = HelperDAO.ExecutaSelect(sql, null);
+
+            if (tabela.Rows.Count == 0)
+                return new List<MotorViewModel>();
+            else
+            {
+                foreach (DataRow row in tabela.Rows)
+                {
+                    listaMotores.Add(MontaModelConsulta(row));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(motorConsulta.Modelo))
+                listaMotores = listaMotores.Where(xs => xs.Modelo.ToLower().Trim().Contains(motorConsulta.Modelo.ToLower().Trim())).ToList();
+            if (!string.IsNullOrEmpty(motorConsulta.Fabricante))
+                listaMotores = listaMotores.Where(xs => xs.Fabricante.ToLower().Trim().Contains(motorConsulta.Fabricante.ToLower().Trim())).ToList();
+            if (!string.IsNullOrEmpty(motorConsulta.NumeroDeSerie))
+                listaMotores = listaMotores.Where(xs => xs.NumeroDeSerie.ToLower().Trim().Contains(motorConsulta.NumeroDeSerie.ToLower().Trim())).ToList();
+
+            return listaMotores;
+        }
+
+
+        #endregion
 
         #region Gerar Id
 

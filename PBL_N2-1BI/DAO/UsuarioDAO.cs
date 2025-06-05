@@ -93,6 +93,10 @@ namespace PBL_N2_1BI.DAO
             return parametros;
         }
 
+        #endregion
+
+        #region CRUD
+
         public void Inserir(UsuarioViewModel usuario)
         {
             usuario.Id = GerarId();
@@ -128,6 +132,10 @@ namespace PBL_N2_1BI.DAO
 
             HelperDAO.ExecutaSQL(sql, parametros);
         }
+
+        #endregion
+
+        #region Consulta
 
         public List<UsuarioViewModel> ListarUsuarios(UsuarioViewModel usuarioConsulta)
         {
@@ -200,7 +208,24 @@ namespace PBL_N2_1BI.DAO
             return usuario;
         }
 
-        #endregion Sql
+        public UsuarioViewModel PesquisarPorLogin(string login)
+        {
+            SqlParameter[] parametros = new SqlParameter[] { new SqlParameter("Login", login) };
+            string sql = "select * from Usuarios where Login=@Login";
+            DataTable tabela = HelperDAO.ExecutaSelect(sql, parametros);
+
+            if (tabela.Rows != null && tabela.Rows.Count > 0)
+            {
+                UsuarioViewModel usuario = MontaModelConsulta(tabela.Rows[0]);
+                usuario.Email = null;
+
+                return usuario;
+            }
+            else
+                return new UsuarioViewModel();
+        }
+
+        #endregion
 
         #region Gerar Id
 
@@ -219,6 +244,8 @@ namespace PBL_N2_1BI.DAO
         }
 
         #endregion
+
+        #region Validações
 
         public bool ValidarLogin(LoginViewModel login)
         {
@@ -295,22 +322,9 @@ namespace PBL_N2_1BI.DAO
                 return false;
         }
 
-        public UsuarioViewModel PesquisarPorLogin(string login)
-        {
-            SqlParameter[] parametros = new SqlParameter[] { new SqlParameter("Login", login) };
-            string sql = "select * from Usuarios where Login=@Login";
-            DataTable tabela = HelperDAO.ExecutaSelect(sql, parametros);
+        #endregion
 
-            if (tabela.Rows != null && tabela.Rows.Count > 0)
-            {
-                UsuarioViewModel usuario = MontaModelConsulta(tabela.Rows[0]);
-                usuario.Email = null;
-
-                return usuario;
-            }
-            else
-                return new UsuarioViewModel();
-        }
+        #region Insert Inicial
 
         public void InsertInicial()
         {
@@ -330,5 +344,7 @@ namespace PBL_N2_1BI.DAO
 
             HelperDAO.ExecutaSQL(sql, CriaParametros(usuario));
         }
+
+        #endregion
     }
 }

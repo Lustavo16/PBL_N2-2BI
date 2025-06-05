@@ -12,6 +12,9 @@ namespace PBL_N2_1BI.Controllers
 {
     public class HistoricoController : Controller
     {
+
+        #region Direcionamentos
+
         public IActionResult Index()
         {
             try
@@ -23,6 +26,10 @@ namespace PBL_N2_1BI.Controllers
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
         }
+
+        #endregion
+
+        #region Requisições API
 
         public async Task<ContentResult> ObterDadosAgregadosMedia(string ip, string tipoSensor, string idSensor, string atributo, DateTime dateFrom, DateTime dateTo, int intervalo = 1)
         {
@@ -122,9 +129,15 @@ namespace PBL_N2_1BI.Controllers
             }
         }
 
+        #endregion
+
+        #region Tratamento de Erros
+
         public IActionResult Erro(Exception ex)
         {
             return View("Error", new ErrorViewModel(ex.ToString()));
         }
+
+        #endregion
     }
 }
