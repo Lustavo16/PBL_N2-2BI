@@ -46,7 +46,6 @@ var dashboard2 = function () {
                 return data.toLocaleString("pt-BR");
             });
 
-            //const labels = valoresTemp.map(p => new Date(p[0]).setHours(new Date(p[0]).getHours() + 3).toLocaleString("pt-BR"));
             const valores = valoresTemp.map(p => p[1].toFixed(2));
 
             if (graficoHistorico)
@@ -115,7 +114,7 @@ var dashboard2 = function () {
                 max = Math.max(...valores);
                 media = (
                     valores
-                        .map(v => parseFloat(v)) // converte para número
+                        .map(v => parseFloat(v))
                         .reduce((a, b) => a + b, 0) / valores.length
                 ).toFixed(2);
             }
@@ -256,16 +255,13 @@ var dashboard1 = function () {
     const graficoGauge = function (tempAtual) {
         const ctx = document.getElementById('gaugeChart').getContext('2d');
 
-        // Gradiente do verde para o vermelho
         const gradient = ctx.createLinearGradient(0, 0, 300, 0);
         gradient.addColorStop(0, 'green');
         gradient.addColorStop(0.5, 'yellow');
         gradient.addColorStop(1, 'red');
 
-        // Destroi gráfico anterior
         if (window.gauge) window.gauge.destroy();
 
-        // Plugin para escrever texto no centro
         const centerText = {
             id: 'centerText',
             afterDraw(chart) {
@@ -622,13 +618,11 @@ var perfilSection = function () {
             if (checkbox) {
                 let objeto = {};
 
-                // Separar o prefixo (C) e a ação (A)
                 const partes = id.match(/([A-Za-z]+)(Consulta|Adicionar|Editar|Excluir)/);
                 if (partes) {
                     const modulo = partes[1];
                     const acao = partes[2];
 
-                    // Tratamento para ação: mudar "Consultar" para "Consulta"
                     objeto.NomeController = modulo;
                     objeto.NomeAction = acao;
                 }
@@ -789,7 +783,7 @@ var simulacaoSection = function () {
                 maxVal = Math.max(...valores).toFixed(2)
                 midVal = (
                     valores
-                        .map(v => parseFloat(v)) // converte para número
+                        .map(v => parseFloat(v))
                         .reduce((a, b) => a + b, 0) / valores.length
                 ).toFixed(2);
 

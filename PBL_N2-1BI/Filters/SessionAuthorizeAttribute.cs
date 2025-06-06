@@ -23,7 +23,6 @@ namespace PBL_N2_1BI.Filters
 
                 var urlAnterior = context.HttpContext.Request.Headers["Referer"].ToString();
 
-                // Verifica se está logado
                 if (string.IsNullOrEmpty(usuarioLogado))
                 {
                     context.Result = new RedirectToActionResult("Login", "Conta", null);
